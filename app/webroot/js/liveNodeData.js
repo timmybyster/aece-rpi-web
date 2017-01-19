@@ -142,7 +142,7 @@ function update() {
 }
 
 function render() {
-    game.debug.cameraInfo(game.camera, 32, 32);
+    //game.debug.cameraInfo(game.camera, 32, 32);
 }
 
 // Utility funcs -----------------------------------------------------------------------------------
