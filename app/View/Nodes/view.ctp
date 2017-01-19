@@ -97,7 +97,7 @@
 						<tr>
 						<th><?php echo __('Isolation Relay'); ?></th>
 						<td>
-						<?php echo Node::isolation_status_enum()[$node['Node']['isolation_relay']]; ?>
+						<?php echo Node::isolation_status_enum()[$node['Node']['isolation_status']]; ?>
 						</td>
 						</tr>
 					<?php endif; ?>
@@ -132,7 +132,7 @@
 						<tr>
 						<th><?php echo __('Isolation Relay'); ?></th>
 						<td>
-						<?php echo Node::isolation_status_enum()[$node['Node']['isolation_relay']]; ?>
+						<?php echo Node::isolation_status_enum()[$node['Node']['isolation_status']]; ?>
 						</td>
 						</tr>
 					<?php endif; ?>
