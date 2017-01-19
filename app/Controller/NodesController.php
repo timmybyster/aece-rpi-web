@@ -228,8 +228,11 @@ class NodesController extends AppController {
 	$missing_pulse_detected_lfs_enum = Node::missing_pulse_detected_lfs_enum();
 	$cable_fault_enum = Node::cable_fault_enum();
 	$earth_leakage_enum = Node::earth_leakage_enum();
+	$isc_key_switch_enum = Node::isc_key_switch_enum();
+	$fire_button_enum = Node::fire_button_enum();
+	$isolation_status_enum = Node::isolation_status_enum();
 	
-	$this->set(compact('parents', 'types', 'key_switch_statuses', 'communication_statuses', 'blast_armed_enums', 'detonator_statuses', 'partial_blast_lfs_enum', 'full_blast_lfs_enum', 'booster_fired_lfs_enum', 'missing_pulse_detected_lfs_enum', 'cable_fault_enum', 'earth_leakage_enum'));
+	$this->set(compact('parents', 'types', 'key_switch_statuses', 'communication_statuses', 'blast_armed_enums', 'detonator_statuses', 'partial_blast_lfs_enum', 'full_blast_lfs_enum', 'booster_fired_lfs_enum', 'missing_pulse_detected_lfs_enum', 'cable_fault_enum', 'earth_leakage_enum','isc_key_switch_enum','fire_button_enum','isolation_status_enum'));
     }
 
     /**
