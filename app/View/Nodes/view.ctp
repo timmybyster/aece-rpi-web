@@ -62,28 +62,89 @@
 		    </tr>
 		    <?php endif; ?>
 		    <tr>
+			<th><?php echo __('Communication Status'); ?></th>
+			<td>
+			    <?php echo Node::communication_status_enum()[$node['Node']['communication_status']]; ?>
+			</td>
+		    </tr>
+		    <!-- IBC-1 types -->
+		    <?php if ($node['Node']['type_id'] == Node::TYPE_BC1):?>
+			<tr>
 			<th><?php echo __('Key Switch Status'); ?></th>
 			<td>
 			    <?php echo Node::key_switch_enum()[$node['Node']['key_switch_status']]; ?>
 			</td>
 		    </tr>
 		    <tr>
-			<th><?php echo __('Communication Status'); ?></th>
+			<th><?php echo __('Fire Button'); ?></th>
 			<td>
-			    <?php echo Node::communication_status_enum()[$node['Node']['communication_status']]; ?>
-			</td>
-		    </tr>		    
-		    <!-- ISC1 types -->
-		    <?php if ($node['Node']['type_id'] == Node::TYPE_ISC1):?>
-		    <tr>
-			<th><?php echo __('Blast Armed'); ?></th>
-			<td>
-			    <?php echo Node::blast_armed_enum()[$node['Node']['blast_armed']]; ?>
+			    <?php echo Node::fire_button_enum()[$node['Node']['fire_button']]; ?>
 			</td>
 		    </tr>
+			<tr>
+			<th><?php echo __('Cable Fault'); ?></th>
+			<td>
+			    <?php echo Node::cable_fault_enum()[$node['Node']['cable_fault']]; ?>
+			</td>
+		    </tr>
+			<tr>
+			<th><?php echo __('Earth Leakage Fault'); ?></th>
+			<td>
+			    <?php echo Node::earth_leakage_enum()[$node['Node']['earth_leakage']]; ?>
+			</td>
+		    </tr>
+					<?php if ($this->Session->read('Auth')['User']['role_id'] == Configure::read('Role')['service']): ?>
+						<tr>
+						<th><?php echo __('Isolation Relay'); ?></th>
+						<td>
+						<?php echo Node::isolation_status_enum()[$node['Node']['isolation_status']]; ?>
+						</td>
+						</tr>
+					<?php endif; ?>
+		    <?php endif; ?>
+		    <!-- ISC1 types -->
+
+		    <?php if ($node['Node']['type_id'] == Node::TYPE_ISC1):?>
+			<tr>
+			<th><?php echo __('Key Switch Status'); ?></th>
+			<td>
+			    <?php echo Node::isc_key_switch_enum()[$node['Node']['key_switch_status']]; ?>
+			</td>
+		    </tr>
+			<th><?php echo __('Cable Fault'); ?></th>
+			<td>
+			    <?php echo Node::cable_fault_enum()[$node['Node']['cable_fault']]; ?>
+			</td>
+		    </tr>
+			<tr>
+			<th><?php echo __('Earth Leakage Fault'); ?></th>
+			<td>
+			    <?php echo Node::earth_leakage_enum()[$node['Node']['earth_leakage']]; ?>
+			</td>
+		    </tr>
+					<?php if ($this->Session->read('Auth')['User']['role_id'] == Configure::read('Role')['service']): ?>
+						<tr>
+						<th><?php echo __('Blast Armed'); ?></th>
+						<td>
+						<?php echo Node::blast_armed_enum()[$node['Node']['blast_armed']]; ?>
+						</td>
+						</tr>
+						<tr>
+						<th><?php echo __('Isolation Relay'); ?></th>
+						<td>
+						<?php echo Node::isolation_status_enum()[$node['Node']['isolation_status']]; ?>
+						</td>
+						</tr>
+					<?php endif; ?>
 		    <?php endif; ?>
 		    <!-- IB651 types -->
 		    <?php if ($node['Node']['type_id'] == Node::TYPE_IB651):?>
+			<tr>
+			<th><?php echo __('Key Switch Status'); ?></th>
+			<td>
+			    <?php echo Node::key_switch_enum()[$node['Node']['key_switch_status']]; ?>
+			</td>
+		    </tr>
 				<tr>
 				<th><?php echo __('Detonator Status'); ?></th>
 				<td>
