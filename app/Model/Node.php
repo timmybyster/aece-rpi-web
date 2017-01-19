@@ -62,6 +62,16 @@ class Node extends AppModel {
     const CABLE_FAULT_OFF = 0;
     const CABLE_FAULT_ON = 1;
 	
+	public static function blast_armed_enum($value = null) {
+	$options = array(
+	    self::BLAST_DISARMED  => __('DISARMED', true),	
+	    self::BLAST_ARMED  => __('ARMED', true),	     	    
+	);
+	return parent::enum($value, $options);
+    }        
+    const BLAST_DISARMED = 0;
+    const BLAST_ARMED = 1;
+	
 	public static function earth_leakage_enum($value = null) {
 	$options = array(
 	    self::EARTH_LEAKAGE_OFF  => __('No Fault', true),	
@@ -71,16 +81,6 @@ class Node extends AppModel {
     }        
     const EARTH_LEAKAGE_OFF = 0;
     const EARTH_LEAKAGE_ON = 1;
-	 
-    public static function blast_armed_enum($value = null) {
-	$options = array(
-	    self::BLAST_DISARMED  => __('DISARMED', true),	
-	    self::BLAST_ARMED  => __('ARMED', true),	     	    
-	);
-	return parent::enum($value, $options);
-    }        
-    const BLAST_DISARMED = 0;
-    const BLAST_ARMED = 1;
         
     public static function key_switch_enum($value = null) {
 	$options = array(
