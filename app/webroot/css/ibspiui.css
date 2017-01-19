@@ -1,0 +1,139 @@
+div.dataTables_processing {
+    top: 100px;
+    background: rgba(66, 139, 102, 0.2);
+    margin-top: 0px;
+    padding-top: 10px;
+}
+
+@media (min-width:1500px){
+	.container{
+		width:1400px
+	}
+}
+
+.DTTT{
+  float: right;
+  display: block;
+  clear: both;
+}
+
+div.DTTT:after{
+  visibility:hidden;
+  display:block;
+  content:"";
+  clear:both;
+  height:10px;
+}
+
+.clear{
+  clear: both;
+}
+
+.busy{
+  height: 100%;
+  background: url(../images/ajax-loader.gif);
+  background-repeat: no-repeat;
+  display: block;
+  padding-left: 20px;  
+}
+
+.busy_button{
+  height: 100%;
+  background: url(../images/ajax-loader.gif);
+  background-repeat: no-repeat;
+  background-position: 10px;
+  display: block;
+  padding-left: 30px;    
+}
+
+.lostpasswordform{
+  margin-top: 50px;  
+}
+
+.searchopt
+{
+  text-decoration: none;
+  color: #888;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.logo
+{
+    margin-top: 40px;
+}
+
+#mobile_app_links
+{
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+}
+
+.mobile_app_link
+{
+    margin-top: 10px;
+    padding: 3px;
+//    display: inline-block; 
+//    vertical-align: top;
+}
+
+.loginlink{
+    float: right;
+    text-align: right;
+}
+
+.loginform
+{
+    margin: 100px;
+    margin-left:auto;
+    margin-right:auto;
+    padding: 50px;
+    border:1px solid;
+    border-radius:25px;
+    width: 400px;
+    box-shadow: 0px 0px 10px #aaaaaa;
+
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #F5F5F5;
+}
+
+/*.footer a,p{
+/  color: #fff;
+}*/
+
+.featurette-heading {
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+@media (min-width: 768px) {
+  .featurette-heading {
+    font-size: 50px;
+  }
+ }
+ 
+ @media (min-width: 992px) {
+  .featurette-heading {
+    margin-top: 50px;
+  }
+ }
+

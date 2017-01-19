@@ -1,0 +1,2 @@
+C:\installs\putty\pscp C:\wamp\www\IBSPiUI\app\webroot\js\live_node_data_AC.*.js pi@192.168.137.10:/var/www/IBSPiUI/app/webroot/js/
+C:\installs\putty\pscp C:\wamp\www\IBSPiUI\app\webroot\css\all.*.css pi@192.168.137.10:/var/www/IBSPiUI/app/webroot/css/

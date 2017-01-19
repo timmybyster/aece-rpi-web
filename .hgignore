@@ -1,0 +1,19 @@
+syntax: glob
+app/Plugin
+lib/Cake
+app/Config/database.php.default
+app/Config/email.php.default
+app/tmp/cache
+app/tmp/logs
+app/tmp/sessions
+app/Plugin.7z
+design/db/ibspiui.mwb.bak
+app/webroot/css/all.*.css
+app/webroot/js/all.v*.js
+app/webroot/js/game_engine_AC*.js
+app/webroot/js/live_node_data_AC*.js
+app/webroot/files
+app/webroot/img
+app/webroot/img.7z
+nbproject/private/private.xml
+IBSPiUI - Shortcut.lnk
