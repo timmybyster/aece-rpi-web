@@ -504,7 +504,7 @@ function createNodeVisuals() {
 	    img = 'isc1';
 	if (node['type'] === 'IB651')
 	    img = 'ib651';
-	nodeVisual = game.add.sprite(node['x'], node['y'], img, 0);
+	nodeVisual = game.add.sprite(snapToGrid(node['x']), snapToGrid(node['y']), img, 0);
 
 	nodeVisual.anchor.set(0.5);
 	nodeVisual.inputEnabled = true;
@@ -567,6 +567,14 @@ function createNodeVisuals() {
     updateNodeVisuals();
 }
 
+function snapToGrid(pos){
+	var temp = pos % 100;
+	var snap = pos - temp;
+	if( temp >= 50){
+		snap += 100;
+	}
+	return snap;
+}
 
 function setGameBoundaries(){
 
@@ -749,8 +757,8 @@ function updateNodes() {
 		//log.debug('got dragged node!');
 		continue;
 	    }
-	    nv.x = node['x'];
-	    nv.y = node['y'];
+	    nv.x = snapToGrid(node['x']);
+	    nv.y = snapToGrid(node['y']);
 	    updateSpecificNodeVisual(node['id']);
 	    nodes_moved = true;
 	} else { //visual node does not exist yet
@@ -761,7 +769,7 @@ function updateNodes() {
 	    img = 'isc1';
 	if (node['type'] === 'IB651')
 	    img = 'ib651';
-	nodeVisual = game.add.sprite(node['x'], node['y'], img, 0);
+	nodeVisual = game.add.sprite(snapToGrid(node['x']), snapToGrid(node['y']), img, 0);
 
 	nodeVisual.anchor.set(0.5);
 	nodeVisual.inputEnabled = true;
