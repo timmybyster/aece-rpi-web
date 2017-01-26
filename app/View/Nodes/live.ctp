@@ -21,6 +21,8 @@
 <input type ="hidden" id="cnfDetonatorNotConnImg" value="<?php echo $detonatorNotConnImg ?>">
 <input type ="hidden" id="cnfFaultDisplayImg" value="<?php echo $faultDisplayImg ?>">
 <input type ="hidden" id="cnfWarningImg" value="<?php echo $warningImg ?>">
+<input type ="hidden" id="cnfIb651LedImg" value="<?php echo $ib651LedImg ?>">
+<input type ="hidden" id="cnfIsc1LedImg" value="<?php echo $isc1LedImg ?>">
 
 <input type ="hidden" id="cnfBackgroundImgContrast" value="<?php echo $background_image_contrast ?>">
 <input type ="hidden" id="cnfBackgroundImgSizeMultiply" value="<?php echo $background_image_size_multiply ?>">
@@ -50,6 +52,18 @@
 		<option value="earth_leakage">Units detecting Earth Leakage Faults</option>
 		<option value="booster_fired">IB651 Boosters that fired</option>
 		<option value="booster_did_not_fire">IB651 Boosters that did not fire</option>
+		<option value="none" selected="selected">None</option>
+	    </select>
+	    
+	</div>
+    </div>
+	
+	<div class="row">
+	<div id="live_led" style="live_node_div" style="width: 100%; height:300px;">
+
+	    <select id="led_routine">
+		<option value="IB651_led">IB651 LED Flashing Routine</option>
+		<option value="ISC1_led">ISC-1 LED Flashing Routine</option>
 		<option value="none" selected="selected">None</option>
 	    </select>
 	    

@@ -87,6 +87,8 @@ class NodesController extends AppController {
 	$detonatorNotConnImg = AMULib::oneFilePathLocation('statusPage', 'DetonatorNotConnected');
 	$faultDisplayImg = AMULib::oneFilePathLocation('statusPage', 'FaultDisplay');
 	$warningImg = AMULib::oneFilePathLocation('statusPage', 'Warning');
+	$ib651LedImg = AMULib::oneFilePathLocation('statusPage', 'IB651Led');
+	$isc1LedImg = AMULib::oneFilePathLocation('statusPage', 'ISC1Led');
 
 	$mayMoveNodes = true;
 	if ($this->Session->read('Auth')['User']['role_id'] == Configure::read('Role')['technician']) {
@@ -99,8 +101,8 @@ class NodesController extends AppController {
 	$warning_dismiss_delay = $this->SystemSetting->getWarningDismissDelay();
 	
 	$disable_footer = true;
-	$this->set(compact('disable_footer', 'backgroundImg', 'bc1Img', 'isc1Img', 'ib651Img', 'keySwitchArmedImg', 'keySwitchDisarmedImg', 'faultDisplayImg','warningImg',
-		'detonatorConnImg', 'detonatorNotConnImg', 'warning_dismiss_delay', 'mayMoveNodes', 'background_image_contrast', 'background_image_size_multiply', 'focus_node_id'));
+	$this->set(compact('disable_footer', 'backgroundImg', 'bc1Img', 'isc1Img', 'ib651Img', 'keySwitchArmedImg', 'keySwitchDisarmedImg', 'faultDisplayImg','warningImg', 'frontPanelImg',
+		'ib651LedImg', 'isc1LedImg', 'detonatorConnImg', 'detonatorNotConnImg', 'warning_dismiss_delay', 'mayMoveNodes', 'background_image_contrast', 'background_image_size_multiply', 'focus_node_id'));
     }
 
     public function get_data() {

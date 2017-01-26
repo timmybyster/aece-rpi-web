@@ -11,6 +11,11 @@ var infoWindow;
 var infoWindowlbls = {};
 var infoWindowtxts = {};
 var infoWindowNumlbls = 15;
+var ledInfoWindowtxts = {};
+var iscLedInfoWindowtxts = {};
+var ledTags = {};
+var iscLedTags = {};
+var ledInfoWindowNumlbls = 10;
 var lineGraphics;
 var cursors;
 var cam_cursor_movement_speed = 15;
@@ -18,6 +23,7 @@ var log = new Log(Log.DEBUG, Log.consoleLogger);
 var nodeUpdatePeriod = 1000; // default every 5000 (5 seconds)
 var changedNodeUpdateOptimization = false; //only update nodes that were changed on server
 var curNodeHiglightingMode = "none"; // current highlighting mode. May have any of the values of "node_highlight" select
+var curLedRoutine = "none";
 var currentlyDragging = false;
 var debug = false;
 
@@ -55,6 +61,11 @@ $(document).ready(function() {
 	curNodeHiglightingMode = $(this).val();
 	highlightNodes(curNodeHiglightingMode);
     });
+	$('#led_routine').change(function() {
+	//alert($(this).text());	
+	curLedRoutine = $(this).val();
+	selectLedRoutine(curLedRoutine);
+    });
 
     highlightNodes(1);
 
@@ -77,6 +88,8 @@ function preload() {
     game.load.image('detonatorNotConnected', $('#cnfDetonatorNotConnImg').val());
 	game.load.image('faultDisplay', $('#cnfFaultDisplayImg').val());
 	game.load.image('warning', $('#cnfWarningImg').val());
+	game.load.image('ib651Led', $('#cnfIb651LedImg').val());
+	game.load.image('isc1Led', $('#cnfIsc1LedImg').val());
 
 }
 
@@ -114,7 +127,92 @@ function create() {
 	infoWindow.addChild(infoWindowtxts[i]);
     }
 	
-	//temperatureGraph setup
+	//ib651Led Setup
+	ib651LedVisual = game.add.sprite(0, 0,'ib651Led',0);
+	ib651LedVisual.anchor.set(0.5);
+	ib651LedVisual.scale.set(0.2);
+	ib651LedVisual.alpha = 0.6;
+	ib651LedVisual.visible = false;
+	ib651LedVisual.inputEnabled = false;
+	
+	// ledInfoWindow setup	
+    ledInfoWindow = game.add.sprite(game.world.centerX, game.world.centerY, 'infowindow');
+    ledInfoWindow.alpha = 1.2;
+    ledInfoWindow.visible = false;
+    ledInfoWindow.anchor.set(0);
+    var style = {font: "14px Arial", fill: "#eeeeee", wordWrap: true, wordWrapWidth: ledInfoWindow.width, align: "center"};
+    xOffset = 20;
+    yOffset = 15;
+	ledInfoWindowtxts[0] = game.add.text(xOffset, 20, "", style);
+	ledInfoWindow.addChild(ledInfoWindowtxts[0]);
+    for (var i = 1; i < ledInfoWindowNumlbls; i++) {
+		ledInfoWindowtxts[i] = game.add.text(xOffset, 40 + yOffset * i, "", style);
+		ledInfoWindow.addChild(ledInfoWindowtxts[i]);
+    }
+	ledInfoWindowtxts[0].scale.set(1.5);
+	
+	// ISC ledInfoWindow setup
+	iscLedInfoWindow = game.add.sprite(game.world.centerX, game.world.centerY, 'infowindow');
+    iscLedInfoWindow.alpha = 1.2;
+    iscLedInfoWindow.visible = false;
+    iscLedInfoWindow.anchor.set(0);
+    var style = {font: "14px Arial", fill: "#eeeeee", wordWrap: true, wordWrapWidth: iscLedInfoWindow.width, align: "center"};
+    xOffset = 20;
+    yOffset = 15;
+	iscLedInfoWindowtxts[0] = game.add.text(xOffset, 20, "", style);
+	iscLedInfoWindow.addChild(iscLedInfoWindowtxts[0]);
+    for (var i = 1; i < ledInfoWindowNumlbls; i++) {
+		iscLedInfoWindowtxts[i] = game.add.text(xOffset, 40 + yOffset * i, "", style);
+		iscLedInfoWindow.addChild(iscLedInfoWindowtxts[i]);
+    }
+	iscLedInfoWindowtxts[0].scale.set(1.5);
+	
+	for (var i = 0; i < 3; i++) {
+		ledTags[i] = game.add.sprite(ib651LedVisual.width - 290, -ib651LedVisual.height -60 + (150 * i), "ib651Led", 0);
+		ledTags[i].anchor.set(0.5);
+		ledTags[i].width = 230;
+		ledTags[i].height = 120;
+		ledTags[i].visible = true;
+		ledTags[i].alpha = 0;
+		ledTags[i].inputEnabled = true;
+		ledTags[i].events.onInputOver.add(showLedInfo, this);
+		ledTags[i].events.onInputOut.add(hideLedInfoWindow, this);
+		ib651LedVisual.addChild(ledTags[i]);
+    }
+	for (var i = 3; i < 6; i++) {
+		ledTags[i] = game.add.sprite(ib651LedVisual.width + 40, -ib651LedVisual.height -60 + (150 * (i-3)), "ib651Led", 0);
+		ledTags[i].anchor.set(0.5);
+		ledTags[i].width = 230;
+		ledTags[i].height = 120;
+		ledTags[i].visible = true;
+		ledTags[i].alpha = 0;
+		ledTags[i].inputEnabled = true;
+		ledTags[i].events.onInputOver.add(showLedInfo, this);
+		ledTags[i].events.onInputOut.add(hideLedInfoWindow, this);
+		ib651LedVisual.addChild(ledTags[i]);
+    }
+	ib651LedVisual.addChild(ledInfoWindow);
+	
+	//isc1Led Setup
+	isc1LedVisual = game.add.sprite(0, 0,'isc1Led',0);
+	isc1LedVisual.anchor.set(0.5);
+	isc1LedVisual.visible = false;
+	isc1LedVisual.inputEnabled = false;
+	isc1LedVisual.alpha = 0.6;
+	
+	for (var i = 0; i < 5; i++) {
+		iscLedTags[i] = game.add.sprite(0, -130 + (65 * i), "ib651Led", 0);
+		iscLedTags[i].anchor.set(0.5);
+		iscLedTags[i].width = 170;
+		iscLedTags[i].height = 45;
+		iscLedTags[i].visible = true;
+		iscLedTags[i].alpha = 0;
+		iscLedTags[i].inputEnabled = true;
+		iscLedTags[i].events.onInputOver.add(showIscLedInfo, this);
+		iscLedTags[i].events.onInputOut.add(hideIscLedInfoWindow, this);
+		isc1LedVisual.addChild(iscLedTags[i]);
+    }
+	isc1LedVisual.addChild(iscLedInfoWindow);
 	
     // Lines shown behind images
     lineGraphics = game.add.graphics(0, 0);
@@ -280,8 +378,153 @@ function showInfoWindow(sprite, pointer) {
 
 }
 
+function showLedInfo(sprite, pointer) {
+
+	ledInfoWindow.width = 300;
+	ledInfoWindow.height = 300;
+	ledInfoWindow.scale.set(2);
+
+    newx = Number(sprite.x) + 50;
+    ledInfoWindow.x = newx;
+    ledInfoWindow.y = sprite.y;
+	ledInfoWindow.width = ledInfoWindow.width/zoom;
+	ledInfoWindow.height = ledInfoWindow.height/zoom;
+    ledInfoWindow.visible = true;
+    ledInfoWindow.bringToTop();
+
+    // check if inside camera
+    // only need to check right edgse and bottom edge - the user can't mouse over any other position		
+    cam = game.camera;
+	ledInfoWindow.x -= ledInfoWindow.width + 100;
+    if ((Number(ledInfoWindow.y) + ledInfoWindow.height) > (cam.y + cam.height)/(zoom/1.6))
+	ledInfoWindow.y -= ledInfoWindow.height;
+
+	for (var i = 0; i < ledInfoWindowNumlbls; i++) {
+	ledInfoWindowtxts[i].text = "";
+    }
+	
+	if(sprite.x == -163){
+		if (sprite.y == -151){
+			ledInfoWindowtxts[0].text = "Not Armed Not Connected";
+			ledInfoWindowtxts[1].text = "Flashing Green at two second intervals";
+			ledInfoWindowtxts[2].text = "when the unit is not ARMED with NO";
+			ledInfoWindowtxts[3].text = "Blasting Circuit connected.";
+		}
+		if (sprite.y == -1){
+			ledInfoWindowtxts[0].text = "Armed or Connected";
+			ledInfoWindowtxts[1].text = "Alternatley Flashing GREEN/RED at two";
+			ledInfoWindowtxts[2].text = "second intervals the unit is either:";
+			ledInfoWindowtxts[3].text = "- ARMED with no Blasting Circuit ";
+			ledInfoWindowtxts[4].text = "connected or";
+			ledInfoWindowtxts[5].text = "- Not ARMED with a Blasting Circuit";
+			ledInfoWindowtxts[6].text = "connected";
+		}
+		if (sprite.y == 149){
+			ledInfoWindowtxts[0].text = "No Communication";
+			ledInfoWindowtxts[1].text = "Rapid alternate flashes of BLUE/RED";
+			ledInfoWindowtxts[2].text = "interspersed between the current state's";
+			ledInfoWindowtxts[3].text = "flashing routine as described in the";
+			ledInfoWindowtxts[4].text = "preceding points, indicates the unit";
+			ledInfoWindowtxts[5].text = "has lost the uplink with the ISC-1.";
+		}
+	}
+	if(sprite.x == 167){
+		if (sprite.y == -151){
+			ledInfoWindowtxts[0].text = "Armed Connected";
+			ledInfoWindowtxts[1].text = "Flashes RED at two second intervals";
+			ledInfoWindowtxts[2].text = "when the unit is ARMED and a blasting";
+			ledInfoWindowtxts[3].text = "circuit is connected.";
+		}
+		if (sprite.y == -1){
+			ledInfoWindowtxts[0].text = "Firing";
+			ledInfoWindowtxts[1].text = "Permanently RED when firing takes place.";
+		}
+		if (sprite.y == 149){
+			ledInfoWindowtxts[0].text = "Fired";
+			ledInfoWindowtxts[1].text = "Flashes BLUE at two second intervals";
+			ledInfoWindowtxts[2].text = "post blasting to indicate the unit has";
+			ledInfoWindowtxts[3].text = "successfully fired.";
+		}
+	}
+		
+	
+}
+
+function showIscLedInfo(sprite, pointer) {
+
+	iscLedInfoWindow.width = 300;
+	iscLedInfoWindow.height = 300;
+	iscLedInfoWindow.scale.set(1);
+
+    newx = Number(sprite.x) + 50;
+    iscLedInfoWindow.x = newx;
+    iscLedInfoWindow.y = sprite.y;
+	iscLedInfoWindow.width = iscLedInfoWindow.width/zoom;
+	iscLedInfoWindow.height = iscLedInfoWindow.height/zoom;
+    iscLedInfoWindow.visible = true;
+    iscLedInfoWindow.bringToTop();
+
+    // check if inside camera
+    // only need to check right edgse and bottom edge - the user can't mouse over any other position		
+    cam = game.camera;
+	iscLedInfoWindow.x -= iscLedInfoWindow.width + 100;
+    if ((Number(iscLedInfoWindow.y) + iscLedInfoWindow.height) > (cam.y + cam.height)/(zoom/1.6))
+	iscLledInfoWindow.y -= iscLedInfoWindow.height;
+
+	for (var i = 0; i < ledInfoWindowNumlbls; i++) {
+	iscLedInfoWindowtxts[i].text = "";
+    }
+	
+		if (sprite.y == -130){
+			iscLedInfoWindowtxts[0].text = "Systems OK";
+			iscLedInfoWindowtxts[1].text = "Flashing GREEN at two second intervals in";
+			iscLedInfoWindowtxts[2].text = "cable monitoring mode.";
+			iscLedInfoWindowtxts[4].text = "The supply cable network is in working";
+			iscLedInfoWindowtxts[5].text = "order and no other errors are present on";
+			iscLedInfoWindowtxts[6].text = "the ISC-1.";
+		}
+		if (sprite.y == -65){
+			iscLedInfoWindowtxts[0].text = "Cable Fault";
+			iscLedInfoWindowtxts[1].text = "Flashing RED at two second intervals, a";
+			iscLedInfoWindowtxts[2].text = "cable fault is present on the outgoing";
+			iscLedInfoWindowtxts[3].text = "supply cable.";
+			iscLedInfoWindowtxts[5].text = "This occurs for both an Earth leakage fault";
+			iscLedInfoWindowtxts[6].text = "and a short circuit fault.";
+		}
+		if (sprite.y == 0){
+			iscLedInfoWindowtxts[0].text = "Uplink Lost";
+			iscLedInfoWindowtxts[1].text = "Alternately flashing BLUE/RED at two";
+			iscLedInfoWindowtxts[2].text = "second intervals during a loss of uplink";
+			iscLedInfoWindowtxts[3].text = "with the IBC-1.";
+			iscLedInfoWindowtxts[5].text = "The communication status of the unit is";
+			iscLedInfoWindowtxts[6].text = "off and it will be unshaded on the";
+			iscLedInfoWindowtxts[7].text = "System Status Page.";
+		}
+		if (sprite.y == 65){
+			iscLedInfoWindowtxts[0].text = "Section Isolated";
+			iscLedInfoWindowtxts[1].text = "Alternately flashes BLUE/GREEN at two";
+			iscLedInfoWindowtxts[2].text = "second intervals when the section has";
+			iscLedInfoWindowtxts[3].text = "been isolated from firing."
+		}
+		if (sprite.y == 130){
+			iscLedInfoWindowtxts[0].text = "Firing";
+			iscLedInfoWindowtxts[1].text = "Permanently on RED when firing takes";
+			iscLedInfoWindowtxts[2].text = "place."
+		}
+		
+	
+}
+
 function hideInfoWindow(sprite, pointer) {
     infoWindow.visible = false;
+}
+
+function hideLedInfoWindow(sprite, pointer) {
+    ledInfoWindow.visible = false;
+}
+
+function hideIscLedInfoWindow(sprite, pointer) {
+    iscLedInfoWindow.visible = false;
 }
 
 
@@ -372,6 +615,30 @@ function highlightNodes(option) {
 		break;
 	}
     }
+}
+
+function selectLedRoutine(option) {
+
+	ib651LedVisual.x = clamp(xMax - 270,100000,1000/zoom);
+	ib651LedVisual.y = yMin + 150;
+	ib651LedVisual.scale.set(0.5)/zoom;
+	isc1LedVisual.x = clamp(xMax - 300,100000,1000/zoom);
+	isc1LedVisual.y = yMin + 200;
+	isc1LedVisual.scale.set(1)/zoom;
+	switch (option) {
+	    case "IB651_led":
+			ib651LedVisual.visible = true;
+			isc1LedVisual.visible = false;
+		break;
+	    case "ISC1_led":
+			ib651LedVisual.visible = false;
+			isc1LedVisual.visible = true;
+		break;
+	    case "none":
+			ib651LedVisual.visible = false;
+			isc1LedVisual.visible = false;
+		break;
+	}
 }
 
 function removeByValue(array, val) {
@@ -486,6 +753,7 @@ var xMax = -3000;
 var zoom = 1;
 var zoomInitial = 1;
 var zoomFlag = 0;
+var KeyC;
 
 function createNodeVisuals() {
 
@@ -598,8 +866,8 @@ function setGameBoundaries(){
 		}
 	}
 	xMin -= 200;
-	xMax += 200;
-	yMin -=200;
+	xMax += 500;
+	yMin -=100;
 	yMax += 200;
 	
 	if ((yMax - yMin)/screen.height > (xMax - xMin)/screen.width && (yMax - yMin)/screen.height > 1 ){
@@ -824,6 +1092,7 @@ function updateNodes() {
 
     // update higlighting. Some parameters might have changed after the previous update
     highlightNodes(curNodeHiglightingMode);
+	selectLedRoutine(curLedRoutine);
 	setGameBoundaries();
 	game.world.setBounds(xMin*zoom, yMin*zoom, (xMax-xMin)*zoom, (yMax-yMin)*zoom);
     if (nodes_moved)
