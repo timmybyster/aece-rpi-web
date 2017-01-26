@@ -88,8 +88,10 @@ function preload() {
     game.load.image('detonatorNotConnected', $('#cnfDetonatorNotConnImg').val());
 	game.load.image('faultDisplay', $('#cnfFaultDisplayImg').val());
 	game.load.image('warning', $('#cnfWarningImg').val());
-	game.load.image('ib651Led', $('#cnfIb651LedImg').val());
-	game.load.image('isc1Led', $('#cnfIsc1LedImg').val());
+	//game.load.image('ib651Led', $('#cnfIb651LedImg').val());
+	//game.load.image('isc1Led', $('#cnfIsc1LedImg').val());
+	game.load.spritesheet('ib651Led', $('#cnfRoute').val() + '/files/statusPage/IB651Led/Untitled.png', 600, 600);
+	game.load.spritesheet('isc1Led', $('#cnfRoute').val() + '/files/statusPage/ISC1Led/Untitled1.png', 300, 300);
 
 }
 
