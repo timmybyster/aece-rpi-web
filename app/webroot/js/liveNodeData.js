@@ -396,8 +396,6 @@ function showLedInfo(sprite, pointer) {
     // only need to check right edgse and bottom edge - the user can't mouse over any other position		
     cam = game.camera;
 	ledInfoWindow.x -= ledInfoWindow.width + 100;
-    if ((Number(ledInfoWindow.y) + ledInfoWindow.height) > (cam.y + cam.height)/(zoom/1.6))
-	ledInfoWindow.y -= ledInfoWindow.height;
 
 	for (var i = 0; i < ledInfoWindowNumlbls; i++) {
 	ledInfoWindowtxts[i].text = "";
@@ -468,8 +466,6 @@ function showIscLedInfo(sprite, pointer) {
     // only need to check right edgse and bottom edge - the user can't mouse over any other position		
     cam = game.camera;
 	iscLedInfoWindow.x -= iscLedInfoWindow.width + 100;
-    if ((Number(iscLedInfoWindow.y) + iscLedInfoWindow.height) > (cam.y + cam.height)/(zoom/1.6))
-	iscLledInfoWindow.y -= iscLedInfoWindow.height;
 
 	for (var i = 0; i < ledInfoWindowNumlbls; i++) {
 	iscLedInfoWindowtxts[i].text = "";
