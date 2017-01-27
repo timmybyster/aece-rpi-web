@@ -21,8 +21,6 @@
 <input type ="hidden" id="cnfDetonatorNotConnImg" value="<?php echo $detonatorNotConnImg ?>">
 <input type ="hidden" id="cnfFaultDisplayImg" value="<?php echo $faultDisplayImg ?>">
 <input type ="hidden" id="cnfWarningImg" value="<?php echo $warningImg ?>">
-<input type ="hidden" id="cnfIb651LedImg" value="<?php echo $ib651LedImg ?>">
-<input type ="hidden" id="cnfIsc1LedImg" value="<?php echo $isc1LedImg ?>">
 
 <input type ="hidden" id="cnfBackgroundImgContrast" value="<?php echo $background_image_contrast ?>">
 <input type ="hidden" id="cnfBackgroundImgSizeMultiply" value="<?php echo $background_image_size_multiply ?>">

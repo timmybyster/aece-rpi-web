@@ -76,6 +76,8 @@ $(document).ready(function() {
 function preload() {
     
     game.load.spritesheet('infowindow', $('#cnfRoute').val() + '/img/infoWindow.png', 300, 300);
+	game.load.spritesheet('ib651Led', $('#cnfRoute').val() + '/files/statusPage/IB651Led/Untitled.png', 600, 600);
+	game.load.spritesheet('isc1Led', $('#cnfRoute').val() + '/files/statusPage/ISC1Led/Untitled1.png', 300, 300);
 	
     // images configured by user
     game.load.image('mine_map', $('#cnfBackgroundImg').val());
@@ -88,10 +90,6 @@ function preload() {
     game.load.image('detonatorNotConnected', $('#cnfDetonatorNotConnImg').val());
 	game.load.image('faultDisplay', $('#cnfFaultDisplayImg').val());
 	game.load.image('warning', $('#cnfWarningImg').val());
-	//game.load.image('ib651Led', $('#cnfIb651LedImg').val());
-	//game.load.image('isc1Led', $('#cnfIsc1LedImg').val());
-	game.load.spritesheet('ib651Led', $('#cnfRoute').val() + '/files/statusPage/IB651Led/Untitled.png', 600, 600);
-	game.load.spritesheet('isc1Led', $('#cnfRoute').val() + '/files/statusPage/ISC1Led/Untitled1.png', 300, 300);
 
 }
 
@@ -621,10 +619,10 @@ function highlightNodes(option) {
 
 function selectLedRoutine(option) {
 
-	ib651LedVisual.x = clamp(xMax - 270,100000,1000/zoom);
+	ib651LedVisual.x = clamp(xMax - 270,100000,(xMin + 1000)/zoom);
 	ib651LedVisual.y = yMin + 150;
 	ib651LedVisual.scale.set(0.5)/zoom;
-	isc1LedVisual.x = clamp(xMax - 300,100000,1000/zoom);
+	isc1LedVisual.x = clamp(xMax - 300,100000, (xMin + 1000)/zoom);
 	isc1LedVisual.y = yMin + 200;
 	isc1LedVisual.scale.set(1)/zoom;
 	switch (option) {
