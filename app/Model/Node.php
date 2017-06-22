@@ -10,17 +10,19 @@ class Node extends AppModel {
     
     public static function types($value = null) {
 	$options = array(
-	    self::TYPE_BC1  => __('IBC-1', true),
+	    self::TYPE_BC1  => __('CCB', true),
 	    self::TYPE_ISC1  => __('ISC-1', true),	 
 	    self::TYPE_IB651  => __('IB651', true),
-		self::TYPE_T001  => __('T-001', true),
+		self::TYPE_CBB  => __('CBB', true),
+		self::TYPE_EDD  => __('EDD', true)
 	);
 	return parent::enum($value, $options);
     }        
     const TYPE_BC1 = 0;
     const TYPE_ISC1 = 1;
     const TYPE_IB651 = 2;
-	const TYPE_T001 = 3;
+	const TYPE_CBB = 3;
+	const TYPE_EDD = 4;
     
     public static function communication_status_enum($value = null) {
 	$options = array(
@@ -125,8 +127,8 @@ class Node extends AppModel {
     
     public static function partial_blast_lfs_enum($value = null) {
 	$options = array(
-	    self::PARTIAL_BLAST_NOT_PRESENT  => __('NOT PRESENT', true),		    
-	    self::PARTIAL_BLAST_PRESENT  => __('PRESENT', true)	    
+	    self::PARTIAL_BLAST_NOT_PRESENT  => __('No Error', true),		    
+	    self::PARTIAL_BLAST_PRESENT  => __('Detonator Error', true)	    
 	);
 	return parent::enum($value, $options);
     }   
@@ -162,9 +164,30 @@ class Node extends AppModel {
     }   
     const MAINS_NO = 0;
     const MAINS_YES = 1;
+	
+	public static function tagged_enum($value = null) {
+	$options = array(	    
+	    self::TAGGED_NO  => __('NOT TAGGED', true),   	    	    
+	    self::TAGGED_YES  => __('TAGGED', true)
+	);
+	return parent::enum($value, $options);
+    }   
+    const TAGGED_NO = 0;
+    const TAGGED_YES = 1;
+	
+	public static function DC_supply_voltage_status_enum($value = null) {
+	$options = array(	    
+	    self::VOLTAGE_NO  => __('NOT PRESENT', true),   	    	    
+	    self::VOLTAGE_YES  => __('PRESENT', true)
+	);
+	return parent::enum($value, $options);
+    }   
+    const VOLTAGE_NO = 0;
+    const VOLTAGE_YES = 1;
     
     public $displayField = "serial";
-        
+	//public $displayField = "delay";
+	
     public $belongsTo = array(
 	'Parent' => array(
 	    'className' => 'Node',
@@ -203,6 +226,10 @@ class Node extends AppModel {
 		$node['Node']['missing_pulse_detected_lfs_text'] = $this->missing_pulse_detected_lfs_enum()[$node['Node']['missing_pulse_detected_lfs']];
 		if ($node['Node']['mains'] != null)
 		$node['Node']['mains_text'] = $this->mains_enum()[$node['Node']['mains']];
+		if ($node['Node']['DC_supply_voltage_status'] != null)
+		$node['Node']['DC_supply_voltage_status_text'] = $this->mains_enum()[$node['Node']['DC_supply_voltage_status']];
+		if ($node['Node']['tagged'] != null)
+		$node['Node']['tagged_text'] = $this->tagged_enum()[$node['Node']['tagged']];
 	    array_push($newdata, $node);
 	}
 	return $newdata;

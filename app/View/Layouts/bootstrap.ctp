@@ -3,7 +3,7 @@
     <head>
 	
 	<title>
-	    AEC Electronics
+	    AXXIS
 	    <?php //echo $title_for_layout; ?>
 	</title>
 	<meta charset="utf-8">
@@ -54,7 +54,7 @@
 	    <div class="container">
 		<br>
 		<p class="pull-right"><a href="#">Back to top</a></p>
-		<p>&copy; AEC Electronics (Pty) Ltd. &middot;
+		<p>&copy; AXXIS &middot;
 	    </div>
 	</div> 
 	<?php endif;?>

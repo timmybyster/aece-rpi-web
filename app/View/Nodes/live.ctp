@@ -15,6 +15,8 @@
 <input type ="hidden" id="cnfBc1Img" value="<?php echo $bc1Img ?>">
 <input type ="hidden" id="cnfIsc1Img" value="<?php echo $isc1Img ?>">
 <input type ="hidden" id="cnfIb651Img" value="<?php echo $ib651Img ?>">
+<input type ="hidden" id="cnfCbbImg" value="<?php echo $cbbImg ?>">
+<input type ="hidden" id="cnfEddImg" value="<?php echo $eddImg ?>">
 <input type ="hidden" id="cnfKeySwitchArmedImg" value="<?php echo $keySwitchArmedImg ?>">
 <input type ="hidden" id="cnfKeySwitchDisarmedImg" value="<?php echo $keySwitchDisarmedImg ?>">
 <input type ="hidden" id="cnfDetonatorConnImg" value="<?php echo $detonatorConnImg ?>">

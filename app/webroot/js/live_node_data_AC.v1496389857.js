@@ -1,4 +1,3 @@
-
 var game;
 var LSPrevCamXstr = "prevCamX";
 var LSPrevCamYstr = "prevCamY";
@@ -119,9 +118,9 @@ function create() {
     infoWindow.alpha = 0.8;
     infoWindow.visible = false;
     infoWindow.anchor.set(0);
-    var style = {font: "12px Arial", fill: "#eeeeee", wordWrap: true, wordWrapWidth: infoWindow.width, align: "center"};
+    var style = {font: "14px Arial", fill: "#eeeeee", wordWrap: true, wordWrapWidth: infoWindow.width, align: "center"};
     xOffset = 150;
-    yOffset = 20;
+    yOffset = 25;
     for (var i = 0; i < infoWindowNumlbls; i++) {
 	infoWindowlbls[i] = game.add.text(20, 20 + yOffset * i, "", style);
 	infoWindowtxts[i] = game.add.text(xOffset, 20 + yOffset * i, "", style);
@@ -308,8 +307,8 @@ function showInfoWindow(sprite, pointer) {
     newx = Number(sprite.x) + 50;
     infoWindow.x = newx;
     infoWindow.y = sprite.y;
-	infoWindow.width = infoWindow.width/(zoom*1.3);
-	infoWindow.height = infoWindow.height/(zoom*1.3);
+	infoWindow.width = infoWindow.width/zoom;
+	infoWindow.height = infoWindow.height/zoom;
     infoWindow.visible = true;
     infoWindow.bringToTop();
 
@@ -325,6 +324,7 @@ function showInfoWindow(sprite, pointer) {
 	node = getNodeDataById(sprite.db_id);
 	var ip = [(node.serial >> 24) & 255, (node.serial >> 16) & 255, (node.serial >> 8) & 255, (node.serial) & 255];
 	var ip_text = ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3];
+	console.log(ip_text);
 
     display_params = ['type', 'comment'];
     display_labels = ['Type', 'Comment'];
@@ -334,7 +334,7 @@ function showInfoWindow(sprite, pointer) {
 	infoWindowtxts[i].text = "";
     }
 
-    if (node['type'] === 'CCB') { //IBC1
+    if (node['type'] === 'IBC-1') { //IBC1
 	display_params.push('serial');
 	display_labels.push('Serial');
 	display_params.push('key_switch_status_text');
@@ -380,33 +380,23 @@ function showInfoWindow(sprite, pointer) {
 	display_labels.push('COMM Status');
 	display_params.push('key_switch_status_text');
 	display_labels.push('Key Switch');
-	display_params.push('blast_armed_text');
-	display_labels.push('Ready Status');
-	display_params.push('partial_blast_lfs_text');
-	display_labels.push('Detonator Status');
-	display_params.push('mains_text');
-	display_labels.push('Mains');
-	display_params.push('DC_supply_voltage_status_text');
-	display_labels.push('36V');
-	display_params.push('cable_fault_text');
-	display_labels.push('Cable fault');
-	display_params.push('earth_leakage_text');
-	display_labels.push('Earth Leakage');
-	display_params.push('isolation_status_text');
-	display_labels.push('Isolation Relay');
+	display_params.push('detonator_status_text');
+	display_labels.push('Detonator status');
+	display_params.push('booster_fired_lfs_text');
+	display_labels.push('Booster Fired');
     }
 	
 	if (node['type'] === 'EDD') { //EDD
-	//display_params.push('delay');
-	//display_labels.push('Delay');
+	display_params.push(ip_text);
+	display_labels.push('IP');
 	display_params.push('communication_status_text');
 	display_labels.push('COMM Status');
-	display_params.push('tagged_text');
-	display_labels.push('Tagged Status');
+	display_params.push('key_switch_status_text');
+	display_labels.push('Key Switch');
 	display_params.push('detonator_status_text');
-	display_labels.push('Connection Status');
+	display_labels.push('Detonator status');
 	display_params.push('booster_fired_lfs_text');
-	display_labels.push('Fired');
+	display_labels.push('Booster Fired');
     }
 	
 
@@ -417,9 +407,9 @@ function showInfoWindow(sprite, pointer) {
 
     for (var i = 0; i < display_params.length; i++) {
 	infoWindowlbls[i].text = display_labels[i];
-	if (display_params[i] in node && node[display_params[i]])
+	//if (display_params[i] in node && node[display_params[i]])
 	    infoWindowtxts[i].text = node[display_params[i]];
-    }
+    //}
 
 }
 
@@ -536,7 +526,7 @@ function showIscLedInfo(sprite, pointer) {
 			iscLedInfoWindowtxts[0].text = "Uplink Lost";
 			iscLedInfoWindowtxts[1].text = "Alternately flashing BLUE/RED at two";
 			iscLedInfoWindowtxts[2].text = "second intervals during a loss of uplink";
-			iscLedInfoWindowtxts[3].text = "with the CCB.";
+			iscLedInfoWindowtxts[3].text = "with the IBC-1.";
 			iscLedInfoWindowtxts[5].text = "The communication status of the unit is";
 			iscLedInfoWindowtxts[6].text = "off and it will be unshaded on the";
 			iscLedInfoWindowtxts[7].text = "System Status Page.";
@@ -807,7 +797,7 @@ function createNodeVisuals() {
 	//node = elem['Node'];
 	node = elem['Node'];
 	//node = elem;
-	if (node['type'] === 'CCB')
+	if (node['type'] === 'IBC-1')
 		img = 'bsc1';
 	if (node['type'] === 'ISC-1')
 	    img = 'isc1';
@@ -836,18 +826,17 @@ function createNodeVisuals() {
 	nodeVisual.type_id = parseInt(node['type_id']);
 	nodeVisuals[node['id']] = nodeVisual;
 
+	// key switch status
+	keySwitchStatusArmed = game.add.sprite(nodeVisual.width + 16, -nodeVisual.height, 'keySwitchArmed', 0);
+	keySwitchStatusDisarmed = game.add.sprite(nodeVisual.width + 16, -nodeVisual.height, 'keySwitchDisarmed', 0);
 	faultDisplay = game.add.sprite(-100, -100, 'faultDisplay', 0);
 	warning = game.add.sprite(-98, -98, 'warning', 0);
 
 	nodeVisual.addChild(faultDisplay);
 	nodeVisual.addChild(warning);
-	if(nodeVisual.type_id != 4){
-		// key switch status
-		keySwitchStatusArmed = game.add.sprite(nodeVisual.width + 16, -nodeVisual.height, 'keySwitchArmed', 0);
-		keySwitchStatusDisarmed = game.add.sprite(nodeVisual.width + 16, -nodeVisual.height, 'keySwitchDisarmed', 0);
-		nodeVisual.addChild(keySwitchStatusArmed);
-		nodeVisual.addChild(keySwitchStatusDisarmed);
-	}
+	nodeVisual.addChild(keySwitchStatusArmed);
+	nodeVisual.addChild(keySwitchStatusDisarmed);
+
 	// detonator status
 	if (node['type'] === 'IB651') {
 	    detonatorStatusConnected = game.add.sprite(nodeVisual.width + 16, 0, 'detonatorConnected', 0);
@@ -855,21 +844,11 @@ function createNodeVisuals() {
 	    nodeVisual.addChild(detonatorStatusConnected);
 	    nodeVisual.addChild(detonatorStatusNotConnected);
 	}
-	  var ip = [(node['serial'] >> 24) & 255, (node['serial'] >> 16) & 255, (node['serial'] >> 8) & 255, node['serial'] & 255];
-	  var ip_text = ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3];
       text1 = game.add.text(nodeVisual.width + 16,-nodeVisual.height,"",0);
-      if(nodeVisual.type_id == 4){
-		  text2 = game.add.text(0,85,ip_text,0);
-		  text3 = game.add.text(0,85,ip_text,0);
-		  text4 = game.add.text(-50,60,node['comment'],0);
-		  text5 = game.add.text(-50,85,"IP:",0);
-	  }
-	  else{
-		text2 = game.add.text(0,85,node['serial'],0);
-		text3 = game.add.text(0,85,node['serial'],0);
-		text4 = game.add.text(-50,60,node['comment'],0);
-		text5 = game.add.text(-50,85,"SN:",0);
-	  }
+      text2 = game.add.text(0,85,node['serial'],0);
+      text3 = game.add.text(0,85,node['serial'],0);
+      text4 = game.add.text(-50,60,node['comment'],0);
+      text5 = game.add.text(-50,85,"SN:",0);
 
       nodeVisual.addChild(text1);
       nodeVisual.addChild(text2);
@@ -1087,7 +1066,7 @@ function updateNodes() {
 	    nodes_moved = true;
 	} else { //visual node does not exist yet
 		
-	if (node['type'] === 'CCB')
+	if (node['type'] === 'IBC-1')
 		img = 'bsc1';
 	if (node['type'] === 'ISC-1')
 	    img = 'isc1';
@@ -1116,18 +1095,16 @@ function updateNodes() {
 	nodeVisual.type_id = parseInt(node['type_id']);
 	nodeVisuals[node['id']] = nodeVisual;
 
+	// key switch status
+	keySwitchStatusArmed = game.add.sprite(nodeVisual.width + 16, -nodeVisual.height, 'keySwitchArmed', 0);
+	keySwitchStatusDisarmed = game.add.sprite(nodeVisual.width + 16, -nodeVisual.height, 'keySwitchDisarmed', 0);
 	faultDisplay = game.add.sprite(-100, -100, 'faultDisplay', 0);
 	warning = game.add.sprite(-98, -98, 'warning', 0);
 
 	nodeVisual.addChild(faultDisplay);
 	nodeVisual.addChild(warning);
-	if(nodeVisual.type_id != 4){
-		// key switch status
-		keySwitchStatusArmed = game.add.sprite(nodeVisual.width + 16, -nodeVisual.height, 'keySwitchArmed', 0);
-		keySwitchStatusDisarmed = game.add.sprite(nodeVisual.width + 16, -nodeVisual.height, 'keySwitchDisarmed', 0);
-		nodeVisual.addChild(keySwitchStatusArmed);
-		nodeVisual.addChild(keySwitchStatusDisarmed);
-	}
+	nodeVisual.addChild(keySwitchStatusArmed);
+	nodeVisual.addChild(keySwitchStatusDisarmed);
 
 	// detonator status
 	if (node['type'] === 'IB651') {
@@ -1136,21 +1113,11 @@ function updateNodes() {
 	    nodeVisual.addChild(detonatorStatusConnected);
 	    nodeVisual.addChild(detonatorStatusNotConnected);
 	}
-      var ip = [(node['serial'] >> 24) & 255, (node['serial'] >> 16) & 255, (node['serial'] >> 8) & 255, node['serial'] & 255];
-	  var ip_text = ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3];
       text1 = game.add.text(nodeVisual.width + 16,-nodeVisual.height,"",0);
-      if(nodeVisual.type_id == 4){
-		  text2 = game.add.text(0,85,ip_text,0);
-		  text3 = game.add.text(0,85,ip_text,0);
-		  text4 = game.add.text(-50,60,node['comment'],0);
-		  text5 = game.add.text(-50,85,"IP:",0);
-	  }
-	  else{
-		text2 = game.add.text(0,85,node['serial'],0);
-		text3 = game.add.text(0,85,node['serial'],0);
-		text4 = game.add.text(-50,60,node['comment'],0);
-		text5 = game.add.text(-50,85,"SN:",0);
-	  }
+      text2 = game.add.text(0,85,node['serial'],0);
+      text3 = game.add.text(0,85,node['serial'],0);
+      text4 = game.add.text(-50,60,node['comment'],0);
+      text5 = game.add.text(-50,85,"SN:",0);
 
       nodeVisual.addChild(text1);
       nodeVisual.addChild(text2);
@@ -1404,3 +1371,108 @@ function update_camera() {
 }
 
 
+
+
+var warninglist = [];
+
+$(document).ready(function() {
+
+    var warningDelaySec = Number($('#cnfWarningDismissDelay').val());
+
+    if (warningDelaySec > 1) {
+	// show warnings
+	setInterval(function() {
+	    showWarnings(); // user paging is not reset on reload
+	}, warningDelaySec * 1000);
+    }
+
+    function dlgWarningAcknowledge() {
+
+	btnAckn = $('#dlgWarning').dialog('widget').find('.ui-dialog-buttonpane button:eq(0)');
+	btnAckn.attr('disabled', true);
+	btnAckn.addClass("ui-state-disabled");
+	$('#dlgLoadingIndic').show();
+
+	warnId = $("#dlgWarning").data('warnId');
+
+	var posting = $.post("../warnings/acknowledge_warning/", {id: warnId});
+	posting.done(function(data) {
+	    if (data['success'] !== 1) {
+		$("#dlgWarning").dialog("close");
+		alert(data['reason']);
+	    } else {
+		$("#dlgWarning").dialog("close");
+	    }
+
+	    // check if there is more warnings in the list
+	    if (warninglist.length > 0) {
+		warning = warninglist.pop();
+		$('#warningMessage').html(warning[1]);
+		$("#dlgWarning").data('warnId', warning[0]).dialog("open");
+	    }
+
+	});
+	posting.fail(function(data) {
+	    alert('Problem connecting to server. Please try again.');
+	    btnAckn = $('#dlgWarning').dialog('widget').find('.ui-dialog-buttonpane button:eq(0)');
+	    btnAckn.attr('disabled', false);
+	    btnAckn.removeClass("ui-state-disabled");
+	    $('#dlgLoadingIndic').hide();
+	});
+
+    }
+
+    function dlgWarningDismiss() {
+	$("#dlgWarning").dialog("close");
+
+	// check if there is more warnings in the list
+	if (warninglist.length > 0) {
+	    warning = warninglist.pop();
+	    $('#warningMessage').html(warning[1]);
+	    $("#dlgWarning").data('warnId', warning[0]).dialog("open");
+	}
+    }
+
+
+    dlgWarning = $("#dlgWarning").dialog({
+	autoOpen: false,
+	modal: true,
+	width: 400,
+	buttons: {
+	    "Acknowledge": dlgWarningAcknowledge,
+	    "Dismiss": dlgWarningDismiss,
+	},
+	open: function(event, ui) {
+	    btnSubmit = $('#dlgWarning').dialog('widget').find('.ui-dialog-buttonpane button:eq(0)');
+	    btnSubmit.attr('disabled', false);
+	    btnSubmit.removeClass("ui-state-disabled");
+	    $('#dlgLoadingIndic').hide();
+	}
+    });
+
+    showWarnings(); // show on startup
+});
+
+
+function showWarnings() {
+    // get all the unacknowledged warnings
+
+    warninglist = [];
+
+    var base_url = $('#cnfRoute').val();
+    //alert(base_url);
+    var posting = $.post(base_url + "warnings/get_unacknowledged/");
+    posting.done(function(data) {
+	$(data).each(function(index, elem) {
+	    warning = elem['Warning'];
+	    //alert('got warning' + warning['message']);	    
+	    warninglist.push([warning['id'], warning['message']]);
+	});
+	if (warninglist.length > 0) {
+	    warning = warninglist.pop()
+	    $('#warningMessage').html(warning[1]);
+	    $("#dlgWarning").data('warnId', warning[0]).dialog("open");
+	}
+    });
+
+}

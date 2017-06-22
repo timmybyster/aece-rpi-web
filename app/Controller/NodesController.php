@@ -81,6 +81,8 @@ class NodesController extends AppController {
 	$bc1Img = AMULib::oneFilePathLocation('statusPage', 'BC-1');
 	$isc1Img = AMULib::oneFilePathLocation('statusPage', 'ISC-1');
 	$ib651Img = AMULib::oneFilePathLocation('statusPage', 'IB651');
+	$cbbImg = AMULib::oneFilePathLocation('statusPage', 'CBB');
+	$eddImg = AMULib::oneFilePathLocation('statusPage', 'EDD');
 	$keySwitchArmedImg = AMULib::oneFilePathLocation('statusPage', 'KeySwitchArmed');
 	$keySwitchDisarmedImg = AMULib::oneFilePathLocation('statusPage', 'KeySwitchDisarmed');
 	$detonatorConnImg = AMULib::oneFilePathLocation('statusPage', 'DetonatorConnected');
@@ -88,9 +90,9 @@ class NodesController extends AppController {
 	$faultDisplayImg = AMULib::oneFilePathLocation('statusPage', 'FaultDisplay');
 	$warningImg = AMULib::oneFilePathLocation('statusPage', 'Warning');
 
-	$mayMoveNodes = true;
-	if ($this->Session->read('Auth')['User']['role_id'] == Configure::read('Role')['technician']) {
-	    $mayMoveNodes = false;
+	$mayMoveNodes = false;
+	if ($this->Session->read('Auth')['User']['role_id'] == Configure::read('Role')['service']) {
+	    $mayMoveNodes = true;
 	}
 	
 	$this->loadModel('SystemSetting');
@@ -99,7 +101,7 @@ class NodesController extends AppController {
 	$warning_dismiss_delay = $this->SystemSetting->getWarningDismissDelay();
 	
 	$disable_footer = true;
-	$this->set(compact('disable_footer', 'backgroundImg', 'bc1Img', 'isc1Img', 'ib651Img', 'keySwitchArmedImg', 'keySwitchDisarmedImg', 'faultDisplayImg','warningImg',
+	$this->set(compact('disable_footer', 'backgroundImg', 'bc1Img', 'isc1Img', 'ib651Img', 'cbbImg', 'eddImg', 'keySwitchArmedImg', 'keySwitchDisarmedImg', 'faultDisplayImg','warningImg',
 		'detonatorConnImg', 'detonatorNotConnImg', 'warning_dismiss_delay', 'mayMoveNodes', 'background_image_contrast', 'background_image_size_multiply', 'focus_node_id'));
     }
 
@@ -231,8 +233,12 @@ class NodesController extends AppController {
 	$isc_key_switch_enum = Node::isc_key_switch_enum();
 	$fire_button_enum = Node::fire_button_enum();
 	$isolation_status_enum = Node::isolation_status_enum();
+	$tagged_enum = Node::tagged_enum();
+	$DC_supply_voltage_status_enum = Node::DC_supply_voltage_status_enum();
+	$mains_enum = Node::mains_enum();
 	
-	$this->set(compact('parents', 'types', 'key_switch_statuses', 'communication_statuses', 'blast_armed_enums', 'detonator_statuses', 'partial_blast_lfs_enum', 'full_blast_lfs_enum', 'booster_fired_lfs_enum', 'missing_pulse_detected_lfs_enum', 'cable_fault_enum', 'earth_leakage_enum','isc_key_switch_enum','fire_button_enum','isolation_status_enum'));
+	
+	$this->set(compact('parents', 'types', 'key_switch_statuses', 'communication_statuses', 'blast_armed_enums', 'detonator_statuses', 'partial_blast_lfs_enum', 'full_blast_lfs_enum', 'booster_fired_lfs_enum', 'missing_pulse_detected_lfs_enum', 'cable_fault_enum', 'earth_leakage_enum','isc_key_switch_enum','fire_button_enum','isolation_status_enum', 'tagged_enum', 'DC_supply_voltage_status_enum', 'mains_enum'));
     }
 
     /**
