@@ -260,7 +260,7 @@ function showInfoWindow(sprite, pointer) {
 		display_labels.push('Earth Leakage');
 		display_params.push('isolation_status_text');
 		display_labels.push('Isolation Relay');
-		display_params.push('dets_length');
+		display_params.push('window_id');
 		display_labels.push('Detonators connected');
     }
 	
