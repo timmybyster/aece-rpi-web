@@ -8,12 +8,16 @@ var cameraUpdate = 0;
 var game;
 
 var nodes = [];
+var nodeVisuals = [];
 
 var infoWindow;
-var nodeVisuals = [];
 var infoWindowlbls = {};
 var infoWindowtxts = {};
 var infoWindowNumlbls = 15;
+
+var lines = [];
+var lineGraphics;
+
 
 var cursors;
 var cam_cursor_movement_speed = 7;
@@ -39,7 +43,10 @@ function create(){
     createInfoWindow();
 	
 	cursors = game.input.keyboard.createCursorKeys();
-	game.world.setBounds(-10000, -10000, 20000, 20000);
+	game.world.setBounds(-1000, -1000, 2000, 2000);
+	
+	lineGraphics = game.add.graphics(0, 0);
+	createKeyboardInputs()
 }
 
 function update(){
@@ -89,7 +96,8 @@ function getAllNodeDataFromServer() {
 
 function createNodeVisuals(){
 	nodes.forEach(node =>{
-		createNodeVisual(node.Node);
+		if(parseInt(node.Node.type_id) != 4)
+			createNodeVisual(node.Node);
 	});
 	updateData();
 }
@@ -133,8 +141,11 @@ function createNodeVisual(node){
 	nodeVisual.addChild(locationText);
 	nodeVisual.locationText = locationText;
 	
+	nodeVisual.parent_id = node.parent_id;
+	nodeVisual.type_id = node.type_id;
 	nodeVisuals[node.id] = nodeVisual;
 }
+
 
 function createCcb(node){
 	var ccb = game.add.sprite(parseInt(node.x), parseInt(node.y), 'ccb');
@@ -290,10 +301,12 @@ function updateNodes(){
 	if (typeof nodes === 'undefined')
 		return;
 	nodes.forEach(node =>{
-		if(node.Node.id in nodeVisuals)
-			updateNodeVisual(nodeVisuals[node.Node.id], node.Node);
-		else
-			createNodeVisual(node.Node);
+		if(node.Node.type_id != 4){
+			if(node.Node.id in nodeVisuals)
+				updateNodeVisual(nodeVisuals[node.Node.id], node.Node);
+			else
+				createNodeVisual(node.Node);
+		}
 	});
 	
 }
@@ -454,3 +467,137 @@ function goToDetonators(sprite, pointer){
 	open(path, "_blank", "channelmode=yes,fullscreen=yes,titlebar=no,status=no,menubar=no,toolbar=no,scrollbars=no");
 }
 
+function removeByValue(array, val) {
+    var index = array.indexOf(val);
+    if (index > -1) {
+	array.splice(index, 1);
+    }
+}
+
+// Render  ----------------------------------------------------------------------------------------------------------------------
+
+/*
+ * Get closest node id, given list of node id's
+ */
+function getClosestNode(db_id, list) {
+    if (list.length === 1)
+	return list[0];
+    if (list.length < 1)
+	return false;
+    min_dist = nodeVisualsdistanceSquared(db_id, list[0]);
+    closest_node_id = nodeVisuals[list[0]].db_id;
+    for (var i = 1; i < list.length; i++) {
+		dist = nodeVisualsdistanceSquared(db_id, list[i]);
+		if (dist < min_dist) {
+			min_dist = dist;
+			closest_node_id = list[i];
+		}
+    }
+    return closest_node_id;
+}
+
+/*
+ * Draws a chain of lines from the parent to the passed children
+ */
+function drawChain(parent_db_id, children) {
+	var length_temp = children.length;
+    if (children.length === 0)
+	return;
+    if (children.length === 1) {
+	lineGraphics.moveTo(nodeVisuals[parent_db_id].x + nodeVisuals[parent_db_id].width/2, nodeVisuals[parent_db_id].y + nodeVisuals[parent_db_id].height/2);
+	lineGraphics.lineTo(nodeVisuals[children[0]].x + nodeVisuals[parent_db_id].width/2, nodeVisuals[children[0]].y + nodeVisuals[parent_db_id].height/2);
+	return;
+    }
+
+    chain = [];
+    // get the first node in the chain: this is the closest node to the parent
+    if (length_temp > 0) {
+	closestchild_id = getClosestNode(parent_db_id, children);
+	chain.push(closestchild_id);
+	removeByValue(children, closestchild_id);
+    }
+    // get a ordered list of all the other children nodes
+    for (var i = 0; i < length_temp; i++) {
+	nextclosest = getClosestNode(chain[i], children);
+	chain.push(nextclosest);
+	removeByValue(children, nextclosest);
+    }
+    // draw line from parent down the chain
+    lineGraphics.moveTo(nodeVisuals[parent_db_id].x + nodeVisuals[parent_db_id].width/2, nodeVisuals[parent_db_id].y + nodeVisuals[parent_db_id].height/2);
+    for (var i = 0; i < length_temp; i++)
+	lineGraphics.lineTo(nodeVisuals[chain[i]].x + nodeVisuals[parent_db_id].width/2, nodeVisuals[chain[i]].y + nodeVisuals[parent_db_id].height/2);
+}
+
+/*
+ * Given a parent id, draw all the chidren lines
+ */
+function upateLinesForParent(parent_db_id) {
+    // get all the children for this node
+    ib651_children_ids = [];
+    isc1_children_ids = [];
+    for (db_id in nodeVisuals) {
+		if (nodeVisuals[db_id].parent_id === parent_db_id) {
+			if (parseInt(nodeVisuals[db_id].type_id) === 3)
+			isc1_children_ids.push(db_id);
+			else if (nodeVisuals[db_id].type_id === 1)
+			ib651_children_ids.push(db_id);
+		}
+    }
+    drawChain(parent_db_id, isc1_children_ids);
+    drawChain(parent_db_id, ib651_children_ids);
+
+}
+
+// Update the lines between the nodes:
+//  ISC-1 and IB651 nodes should be connected (with graphical lines) in a serial fashion so that each child is 
+// connected to the next closest child. ISC-1 and IB651 child nodes will make up 2 unique daisy chains.
+function updateLines() {
+
+    console.log("updateLines()");
+
+    lineGraphics.clear();
+    lineGraphics.lineStyle(1, 0x222222);
+
+    var parents = [];
+    for (db_id in nodeVisuals){
+		parents.push(nodeVisuals[db_id].parent_id);
+    }
+	var parents_unique = unique(parents);
+	console.log(parents_unique);
+
+    for (id in parents_unique)
+	upateLinesForParent(parents_unique[id]);
+}
+
+//game.physics.arcade.distanceBetween
+function nodeVisualsdistanceSquared(id1, id2) {
+    return (nodeVisuals[id1].x - nodeVisuals[id2].x) * (nodeVisuals[id1].x - nodeVisuals[id2].x) + (nodeVisuals[id1].y - nodeVisuals[id2].y) * (nodeVisuals[id1].y - nodeVisuals[id2].y);
+}
+
+// get unique array
+// pasted from http://stackoverflow.com/questions/11688692/most-elegant-way-to-create-a-list-of-unique-items-in-javascript
+// Solution by Eugene Naydenov
+function unique(arr) {
+    var u = {}, a = [];
+    for (var i = 0, l = arr.length; i < l; ++i) {
+	if (!u.hasOwnProperty(arr[i])) {
+	    a.push(arr[i]);
+	    u[arr[i]] = 1;
+	}
+    }
+    return a;
+}
+
+function createKeyboardInputs() {
+    var keyL = game.input.keyboard.addKey(Phaser.Keyboard.L);
+    keyL.onDown.add(toggleNodeLinesVisibility, this);
+}
+
+var nodeLinesVisible = true;
+function toggleNodeLinesVisibility() {
+    nodeLinesVisible = !nodeLinesVisible;
+    if (nodeLinesVisible)
+	updateLines();
+    else
+	lineGraphics.clear();
+}
