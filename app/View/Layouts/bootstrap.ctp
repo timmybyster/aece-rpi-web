@@ -37,7 +37,9 @@
 
     <body>
 
-	<?php echo $this->Element('loggedin_menu'); ?>
+	<?php if ((isset($disable_menu) && $disable_menu == false) || !isset($disable_menu)):?>
+		<?php echo $this->Element('loggedin_menu'); ?>
+	<?php endif;?>
 
 	<div>
 

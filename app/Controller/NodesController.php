@@ -73,6 +73,35 @@ class NodesController extends AppController {
 	$types = $this->Node->types();
 	$this->set(compact('nodes', 'types'));
     }
+	
+	public function detonators($id = null) {
+	$this->Node->contain('Parent.serial');
+	$nodes = $this->Node->find('all');
+	if ($nodes != null)
+	    $nodes = $this->Node->populateEnums($nodes);
+	$types = $this->Node->types();
+	$this->set(compact('nodes', 'types'));
+	if (!$this->Node->exists($id)) {
+	    throw new NotFoundException(__('Invalid node'));
+	}
+	$options = array('conditions' => array('Node.' . $this->Node->primaryKey => $id));
+	$this->set('parentNode', $this->Node->find('first', $options));
+    }
+	
+	public function detslive($id = null) {
+	$disable_menu = true;
+	$this->Node->contain('Parent.serial');
+	$nodes = $this->Node->find('all');
+	if ($nodes != null)
+	    $nodes = $this->Node->populateEnums($nodes);
+	$types = $this->Node->types();
+	$this->set(compact('disable_menu','nodes', 'types'));
+	if (!$this->Node->exists($id)) {
+	    throw new NotFoundException(__('Invalid node'));
+	}
+	$options = array('conditions' => array('Node.' . $this->Node->primaryKey => $id));
+	$this->set('parentNode', $this->Node->find('first', $options));
+    }
 
     public function live($focus_node_id = null) {
 
@@ -123,25 +152,25 @@ class NodesController extends AppController {
     }
 
     public function get_all_data() {
-	$this->autoRender = false; // no view to render	
-	$this->response->type('json');
+		$this->autoRender = false; // no view to render	
+		$this->response->type('json');
 
-	$conditions = array();
-	if (isset($this->request->data['updated_after'])){	    
-	    //$conditions = array('modified >'=> date('Y-m-d H:i:s', strtotime('-1 second')));	
-	    $conditions = array('modified >'=> $this->request->data['updated_after']);
-	    //$conditions = array('modified >'=> "2015-02-12 16:09:43");
-	}
-	
-	$this->Node->contain();
-	$nodes = $this->Node->find('all', array('conditions' => $conditions));
-	if ($nodes != null) {
-	    $nodes = $this->Node->populateEnums($nodes);
-	    $this->response->body(json_encode($nodes));
-	    return;
-	}
-	$ret['error'] = "No Data";
-	$this->response->body(json_encode($ret));
+		$conditions = array();
+		if (isset($this->request->data['updated_after'])){	    
+			//$conditions = array('modified >'=> date('Y-m-d H:i:s', strtotime('-1 second')));	
+			$conditions = array('modified >'=> $this->request->data['updated_after']);
+			//$conditions = array('modified >'=> "2015-02-12 16:09:43");
+		}
+		
+		$this->Node->contain();
+		$nodes = $this->Node->find('all', array('conditions' => $conditions));
+		if ($nodes != null) {
+			$nodes = $this->Node->populateEnums($nodes);
+			$this->response->body(json_encode($nodes));
+			return;
+		}
+		$ret['error'] = "No Data";
+		$this->response->body(json_encode($ret));
     }
 
     public function update_position() {

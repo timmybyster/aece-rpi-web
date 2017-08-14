@@ -167,13 +167,23 @@ class Node extends AppModel {
 	
 	public static function tagged_enum($value = null) {
 	$options = array(	    
-	    self::TAGGED_NO  => __('NOT TAGGED', true),   	    	    
-	    self::TAGGED_YES  => __('TAGGED', true)
+	    self::TAGGED_NO  => __('NOT LOGGED', true),   	    	    
+	    self::TAGGED_YES  => __('LOGGED', true)
 	);
 	return parent::enum($value, $options);
     }   
     const TAGGED_NO = 0;
     const TAGGED_YES = 1;
+	
+	public static function calibrated_enum($value = null) {
+	$options = array(	    
+	    self::CALIBRATED_NO  => __('NOT CALIBRATED', true),   	    	    
+	    self::CALIBRATED_YES  => __('CALIBRATED', true)
+	);
+	return parent::enum($value, $options);
+    }   
+    const CALIBRATED_NO = 0;
+    const CALIBRATED_YES = 1;
 	
 	public static function DC_supply_voltage_status_enum($value = null) {
 	$options = array(	    
@@ -199,8 +209,8 @@ class Node extends AppModel {
 	$newdata = array();
 	foreach ($data as $node){
 	    $node['Node']['type'] = $this->types()[$node['Node']['type_id']];
-	    if ($node['Node']['communication_flag'] != null)
-		$node['Node']['communication_status_text'] = $this->communication_status_enum()[$node['Node']['communication_flag']];
+	    if ($node['Node']['communication_status'] != null)
+		$node['Node']['communication_status_text'] = $this->communication_status_enum()[$node['Node']['communication_status']];
 		if ($node['Node']['cable_fault'] != null)
 		$node['Node']['cable_fault_text'] = $this->cable_fault_enum()[$node['Node']['cable_fault']];
 		if ($node['Node']['earth_leakage'] != null)
@@ -230,6 +240,8 @@ class Node extends AppModel {
 		$node['Node']['DC_supply_voltage_status_text'] = $this->mains_enum()[$node['Node']['DC_supply_voltage_status']];
 		if ($node['Node']['tagged'] != null)
 		$node['Node']['tagged_text'] = $this->tagged_enum()[$node['Node']['tagged']];
+		if ($node['Node']['calibration'] != null)
+		$node['Node']['calibration_text'] = $this->calibrated_enum()[$node['Node']['calibration']];
 	    array_push($newdata, $node);
 	}
 	return $newdata;

@@ -111,6 +111,7 @@
 			    <?php echo Node::isc_key_switch_enum()[$node['Node']['key_switch_status']]; ?>
 			</td>
 		    </tr>
+			<tr>
 			<th><?php echo __('Cable Fault'); ?></th>
 			<td>
 			    <?php echo Node::cable_fault_enum()[$node['Node']['cable_fault']]; ?>
@@ -189,13 +190,46 @@
 						</td>
 						</tr>
 					<?php endif; ?>		
-		    <?php endif; ?>		    
-		    <tr>
-			<th><?php echo __('Modified'); ?></th>
-			<td>
-			    <?php echo h($node['Node']['modified']); ?>
-			</td>
-		    </tr>
+		    <?php endif; ?>
+			<!-- CBB types -->
+		    <?php if ($node['Node']['type_id'] == Node::TYPE_CBB):?>
+				<tr>
+				<th><?php echo __('Key Switch Status'); ?></th>
+				<td>
+					<?php echo Node::key_switch_enum()[$node['Node']['key_switch_status']]; ?>
+				</td>
+				</tr>
+				<tr>
+				<th><?php echo __('Mains Status'); ?></th>
+				<td>
+					<?php echo Node::mains_enum()[$node['Node']['mains']]; ?>
+				</td>
+				</tr>
+				<tr>
+				<th><?php echo __('Cable Fault'); ?></th>
+				<td>
+					<?php echo Node::cable_fault_enum()[$node['Node']['cable_fault']]; ?>
+				</td>
+				</tr>
+				<tr>
+				<th><?php echo __('Earth Leakage Fault'); ?></th>
+				<td>
+					<?php echo Node::earth_leakage_enum()[$node['Node']['earth_leakage']]; ?>
+				</td>
+				</tr>
+				<tr>
+				<th><?php echo __('Isolation Relay'); ?></th>
+				<td>
+				<?php echo Node::isolation_status_enum()[$node['Node']['isolation_relay']]; ?>
+				</td>
+				</tr>
+				<tr>
+				<th><?php echo $this->Html->link('Detonators', array('action' => 'detonators', $node['Node']['id'])); ?></th>
+				<td>
+				<?php echo h($node['Node']['window_id']); ?>
+				</td>
+				</tr>
+		    <?php endif; ?>		    		    
 		</tbody>
 	    </table>
 
@@ -203,3 +237,4 @@
 
     </div>
 </div>
+				

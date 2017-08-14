@@ -47,7 +47,7 @@ if ($this->Session->read('Auth')['User']['role_id'] == Configure::read('Role')['
     		    </ul>
     		</li>
 		<?php endif; ?>
-		<li><?php echo $this->Html->link(__('Change Pwd'), array('controller' => 'users', 'action' => 'change_password')); ?></li>
+		<li><?php echo $this->Html->link(__('Change Password'), array('controller' => 'users', 'action' => 'change_password')); ?></li>
 
 		<li><?php echo $this->Html->link(__('Logout'), array('controller' => 'users', 'action' => 'logout')); ?></li>		
 	    </ul>
