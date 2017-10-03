@@ -56,7 +56,6 @@
 	    <div class="container">
 		<br>
 		<p class="pull-right"><a href="#">Back to top</a></p>
-		<p>&copy; AXXIS &middot;
 	    </div>
 	</div> 
 	<?php endif;?>

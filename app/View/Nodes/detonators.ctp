@@ -31,7 +31,7 @@
 		</thead>
 		<tbody>
 		    <?php foreach ($nodes as $node): ?>
-    		    <?php if($node['Node']['parent_id'] == $parentNode['Node']['id']) : ?>
+    		    <?php if($node['Node']['parent_id'] == $parentNode['Node']['id'] && $node['Node']['type_id'] == 4) : ?>
 					<tr>
 					<th><?php echo h((($node['Node']['serial'])>>24) & 255);?><?php echo __('.'); ?> 
 						<?php echo h((($node['Node']['serial'])>>16) & 255);?> <?php echo __('.'); ?>

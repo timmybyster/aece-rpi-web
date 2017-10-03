@@ -36,9 +36,6 @@
 			<th><?php echo __('COMM Status'); ?></th>
 			<th><?php echo __('Comment'); ?></th>
 			<th><?php echo __('Parent (serial)'); ?></th>
-			<th><?php echo __('Detonators Connected'); ?></th>			
-			<th class="actions"></th>
-			<th><?php echo __(''); ?></th>
 		    </tr>
 		</thead>
 		<tbody>
@@ -51,13 +48,6 @@
 					<td><?php if($node['Node']['type_id'] < 4)
 						echo h($node['Node']['comment']); ?></td>	
 					<td><?php echo h($node['Parent']['serial']); ?></td>	
-					<td><?php echo h($node['Node']['window_id']); ?></td>
-					<td class="actions">
-					<?php echo $this->Html->link('<span class="glyphicon glyphicon-search"></span>', array('action' => 'view', $node['Node']['id']), array('escape' => false)); ?>				
-					</td>
-					<td>
-					<?php echo $this->Html->link('See on map', array('controller' => 'nodes', 'action' => 'live', $node['Node']['id']), array('escape' => false)); ?>
-					</td>
 					</tr>
 				<?php endif; ?>	
 		    <?php endforeach; ?>

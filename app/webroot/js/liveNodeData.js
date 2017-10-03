@@ -26,7 +26,6 @@ $(document).ready(function() {
 
     game = new Phaser.Game(gameWidth, gameHeight, Phaser.CANVAS, 'live_div', {preload: preload, create: create, update: update, render: render});
 	setInterval(updateData, 2000);
-	
 });
 
 function preload(){
@@ -36,6 +35,8 @@ function preload(){
 	game.load.image('cbb', $('#cnfRoute').val() + '/img/cbb.png');
 	game.load.image('keySwitch', $('#cnfRoute').val() + '/img/keySwitch.png');
 	game.load.image('led', $('#cnfRoute').val() + '/img/led.png');
+	game.load.image('fault', $('#cnfRoute').val() + '/img/fault.png');
+	game.load.image('warning', $('#cnfRoute').val() + '/img/warning.png');
 }
 
 function create(){
@@ -46,7 +47,7 @@ function create(){
 	game.world.setBounds(-1000, -1000, 2000, 2000);
 	
 	lineGraphics = game.add.graphics(0, 0);
-	createKeyboardInputs()
+	createKeyboardInputs();
 }
 
 function update(){
@@ -100,6 +101,7 @@ function createNodeVisuals(){
 			createNodeVisual(node.Node);
 	});
 	updateData();
+	updateLines();
 }
 
 function createNodeVisual(node){
@@ -132,12 +134,12 @@ function createNodeVisual(node){
 	nodeVisual.click = 0;
 	
 	text1 = "SN: " + node.serial;
-	serialText = game.add.text(0, 2*nodeVisual.height + 20, text1, 0);
+	serialText = game.add.text(20, 2*nodeVisual.height + 25, text1, 0);
 	nodeVisual.addChild(serialText);
 	nodeVisual.serialText = serialText;
 	
 	text2 = node.comment;
-	locationText = game.add.text(-20, 2*nodeVisual.height + 45, text2, 0);
+	locationText = game.add.text(20, 2*nodeVisual.height + 50, text2, 0);
 	nodeVisual.addChild(locationText);
 	nodeVisual.locationText = locationText;
 	
@@ -155,34 +157,41 @@ function createCcb(node){
 
 function createCbb(node){
 	var cbb = game.add.sprite(parseInt(node.x), parseInt(node.y), 'cbb');
-	var led = game.add.sprite(cbb.width + 20, cbb.height - 40, 'led');
+	var faultDisplay = game.add.sprite(-13, -24, 'fault', 0);
+	
+	cbb.addChild(faultDisplay);
+	
 	cbb.state = "ok";
 	
-	bad_col = Phaser.Color.toRGBA(0, 255, 0, 0);
+	bad_col = Phaser.Color.toRGBA(0, 0, 0, 0);
 	neutral_col = Phaser.Color.toRGBA(100, 20, 20, 20);
 	hl_col = Phaser.Color.toRGBA(0, 50, 100, 255);
 	ok_col = Phaser.Color.toRGBA(0, 0, 255, 0);
 	setInterval(function(){
 		setTimeout(function(){
-			led.tint = neutral_col;
-			led.alpha = 0.2;
+			faultDisplay.tint = neutral_col;
+			faultDisplay.alpha = 0;
 		},100);
-		led.alpha = 0.8;
 		switch(cbb.state){
 			case "ok" :
-				led.tint = ok_col;
+				faultDisplay.tint = ok_col;
+				faultDisplay.alpha = 0.8;
 				break;
 			case "fault" :
-				led.tint = bad_col;
+				faultDisplay.tint = bad_col;
+				faultDisplay.alpha = 0.8;
+				break;
+			case "fired" :
+				faultDisplay.tint = hl_col;
+				faultDisplay.alpha = 0.8;
 				break;
 				
-			case "fired" :
-				led.tint = hl_col;
+			case "comms_loss":
+				faultDisplay.alpha = 0;
 				break;
 		}
 	},1000);
-	cbb.addChild(led);
-	cbb.led = led;
+	cbb.faultDisplay = faultDisplay;
 	return cbb;
 }
 
@@ -271,8 +280,6 @@ function showInfoWindow(sprite, pointer) {
 		display_labels.push('Earth Leakage');
 		display_params.push('isolation_status_text');
 		display_labels.push('Isolation Relay');
-		display_params.push('window_id');
-		display_labels.push('Detonators connected');
     }
 	
 
@@ -322,29 +329,14 @@ function updateNodeVisual(nodeVisual, node){
 	
 	if(node.communication_status == 1)
 		nodeVisual.alpha = 1;
-	else
-		nodeVisual.alpha = 0.5;
-	
-	if(node.earth_leakage == 1 || node.cable_fault == 1){
-		if(nodeVisual.flashInterval == null){
-			nodeVisual.flashInterval = setInterval(function(){
-			if(nodeVisual.tint === bad_col)
-				nodeVisual.tint = neutral_col;
-			else
-				nodeVisual.tint = bad_col;
-			},500);
-		}
-	}
 	else{
-		if(nodeVisual.flashInterval != null){
-			clearInterval(nodeVisual.flashInterval);
-			nodeVisual.flashInterval = null;
-			nodeVisual.tint = neutral_col;
-		}
+		nodeVisual.alpha = 0.5;
 	}
 	
 	if(parseInt(node.type_id) == 3){
-		if(node.partial_blast_lfs == 1)
+		if(node.communication_status == 0)
+			nodeVisual.state = "comms_loss";
+		else if(node.partial_blast_lfs == 1 || node.cable_fault == 1 || node.earth_leakage == 1)
 			nodeVisual.state = "fault";
 		else if(node.booster_fired_lfs == 1)
 			nodeVisual.state = "fired";
@@ -451,7 +443,8 @@ function clickEvent(sprite, pointer){
 	}
 	else if(sprite.click == 1){
 		sprite.click = 0;
-		goToDetonators(sprite, pointer);
+		if(sprite.type_id == 3)
+			goToDetonators(sprite, pointer);
 	}
 }
 

@@ -26,16 +26,15 @@ if ($this->Session->read('Auth')['User']['role_id'] == Configure::read('Role')['
 		<span class="icon-bar"></span>
 		<span class="icon-bar"></span>
 	    </button>
-	    <?php echo $this->Html->link("System Status", array('controller' => 'users', 'action' => 'home'), array('class' => "navbar-brand")); ?>
-        </div>
+	    </div>
         <div class="collapse navbar-collapse">
-	    <ul class="nav navbar-nav">		
+	    <ul class="nav navbar-nav">
+		<li><?php echo $this->Html->link(__('System Status'), array('controller' => 'users', 'action' => 'home')); ?></li>
 		<li><?php echo $this->Html->link(__('Nodes'), array('controller' => 'nodes', 'action' => 'index')); ?></li> 
-		<li><?php echo $this->Html->link(__('Logging'), array('controller' => 'logs', 'action' => 'index')); ?></li>
 		<li><?php echo $this->Html->link(__('Warnings'), array('controller' => 'warnings', 'action' => 'index')); ?></li>
 		<?php if ($cur_role == "admin" || $cur_role == "service"): ?>
     		<li class="dropdown">
-    		    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Config <span class="caret"></span></a>
+    		    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Configuration <span class="caret"></span></a>
     		    <ul class="dropdown-menu" role="menu">			    
     			<li><?php echo $this->Html->link(__('Users'), array('controller' => 'users', 'action' => 'index')); ?></li>				
     			<li><?php echo $this->Html->link(__('Logs'), array('controller' => 'logs', 'action' => 'config')); ?></li>
