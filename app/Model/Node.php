@@ -167,13 +167,23 @@ class Node extends AppModel {
 	
 	public static function tagged_enum($value = null) {
 	$options = array(	    
-	    self::TAGGED_NO  => __('NOT LOGGED', true),   	    	    
-	    self::TAGGED_YES  => __('LOGGED', true)
+	    self::TAGGED_NO  => __('NOT TAGGED', true),   	    	    
+	    self::TAGGED_YES  => __('TAGGED', true)
 	);
 	return parent::enum($value, $options);
     }   
     const TAGGED_NO = 0;
     const TAGGED_YES = 1;
+	
+	public static function logged_enum($value = null) {
+	$options = array(	    
+	    self::LOGGED_NO  => __('NOT BLUETOOTH', true),   	    	    
+	    self::TAGGED_YES  => __('BLUETOOTH', true)
+	);
+	return parent::enum($value, $options);
+    }   
+    const LOGGED_NO = 0;
+    const LOGGED_YES = 1;
 	
 	public static function calibrated_enum($value = null) {
 	$options = array(	    
@@ -240,6 +250,8 @@ class Node extends AppModel {
 		$node['Node']['DC_supply_voltage_status_text'] = $this->mains_enum()[$node['Node']['DC_supply_voltage_status']];
 		if ($node['Node']['tagged'] != null)
 		$node['Node']['tagged_text'] = $this->tagged_enum()[$node['Node']['tagged']];
+		if ($node['Node']['logged'] != null)
+		$node['Node']['logged_text'] = $this->logged_enum()[$node['Node']['logged']];
 		if ($node['Node']['calibration'] != null)
 		$node['Node']['calibration_text'] = $this->calibrated_enum()[$node['Node']['calibration']];
 	    array_push($newdata, $node);

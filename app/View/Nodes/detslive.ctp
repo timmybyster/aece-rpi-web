@@ -24,6 +24,7 @@
 			<th><?php echo __('Type'); ?></th>			
 			<th><?php echo __('Connection Status'); ?></th>
 			<th><?php echo __('Window'); ?></th>
+			<th><?php echo __('Tagged'); ?></th>
 			<th><?php echo __('Logged'); ?></th>
 			<th><?php echo __('Calibrated'); ?></th>
 			<th><?php echo __('Delay (ms)'); ?></th>
@@ -42,6 +43,7 @@
 					<td><?php echo h($node['Node']['detonator_status_text']); ?></td>			
 					<td><?php echo h($node['Node']['window_id']); ?></td>
 					<td><?php echo h($node['Node']['tagged_text']); ?></td>
+					<td><?php echo h($node['Node']['logged_text']); ?></td>
 					<td><?php echo h($node['Node']['calibration_text']); ?></td>
 					<td><?php echo h($node['Node']['delay']); ?></td>
 					</tr>

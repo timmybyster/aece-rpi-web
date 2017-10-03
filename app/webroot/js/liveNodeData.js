@@ -161,35 +161,120 @@ function createCbb(node){
 	
 	cbb.addChild(faultDisplay);
 	
-	cbb.state = "ok";
+	cbb.state = "greenSingleFlash";
 	
-	bad_col = Phaser.Color.toRGBA(0, 0, 0, 0);
-	neutral_col = Phaser.Color.toRGBA(100, 20, 20, 20);
-	hl_col = Phaser.Color.toRGBA(0, 50, 100, 255);
-	ok_col = Phaser.Color.toRGBA(0, 0, 255, 0);
+	red_col = Phaser.Color.toRGBA(0, 255, 0, 0);
+	green_col = Phaser.Color.toRGBA(0, 0, 255, 0);
+	blue_col = Phaser.Color.toRGBA(0, 0, 0, 255);
 	setInterval(function(){
-		setTimeout(function(){
-			faultDisplay.tint = neutral_col;
-			faultDisplay.alpha = 0;
-		},100);
 		switch(cbb.state){
-			case "ok" :
-				faultDisplay.tint = ok_col;
+			case "redSingleFlash" :
+				faultDisplay.tint = red_col;
 				faultDisplay.alpha = 0.8;
 				break;
-			case "fault" :
-				faultDisplay.tint = bad_col;
+			case "greenSingleFlash" :
+				faultDisplay.tint = green_col;
 				faultDisplay.alpha = 0.8;
 				break;
-			case "fired" :
-				faultDisplay.tint = hl_col;
+			case "blueSingleFlash" :
+				faultDisplay.tint = blue_col;
+				faultDisplay.alpha = 0.8;
+				break;	
+			case "redDoubleFlash" :
+				faultDisplay.tint = red_col;
 				faultDisplay.alpha = 0.8;
 				break;
-				
+			case "greenDoubleFlash" :
+				faultDisplay.tint = green_col;
+				faultDisplay.alpha = 0.8;
+				break;
+			case "blueDoubleFlash" :
+				faultDisplay.tint = blue_col;
+				faultDisplay.alpha = 0.8;
+				break;	
+			case "redSolid" :
+				faultDisplay.tint = red_col;
+				faultDisplay.alpha = 0.8;
+				break;
+			case "greenSolid" :
+				faultDisplay.tint = green_col;
+				faultDisplay.alpha = 0.8;
+				break;
+			case "blueSolid" :
+				faultDisplay.tint = blue_col;
+				faultDisplay.alpha = 0.8;
+				break;	
 			case "comms_loss":
 				faultDisplay.alpha = 0;
 				break;
 		}
+		setTimeout(function(){
+			faultDisplay.alpha = 0;
+			switch(cbb.state){
+				case "redSolid" :
+					faultDisplay.tint = red_col;
+					faultDisplay.alpha = 0.8;
+					break;
+				case "greenSolid" :
+					faultDisplay.tint = green_col;
+					faultDisplay.alpha = 0.8;
+					break;
+				case "blueSolid" :
+					faultDisplay.tint = blue_col;
+					faultDisplay.alpha = 0.8;
+					break;
+				default :
+					faultDisplay.alpha = 0;
+			}
+		},100);
+		setTimeout(function(){
+			switch(cbb.state){
+				case "redDoubleFlash" :
+					faultDisplay.tint = red_col;
+					faultDisplay.alpha = 0.8;
+					break;
+				case "greenDoubleFlash" :
+					faultDisplay.tint = green_col;
+					faultDisplay.alpha = 0.8;
+					break;
+				case "blueDoubleFlash" :
+					faultDisplay.tint = blue_col;
+					faultDisplay.alpha = 0.8;
+					break;	
+				case "redSolid" :
+					faultDisplay.tint = red_col;
+					faultDisplay.alpha = 0.8;
+					break;
+				case "greenSolid" :
+					faultDisplay.tint = green_col;
+					faultDisplay.alpha = 0.8;
+					break;
+				case "blueSolid" :
+					faultDisplay.tint = blue_col;
+					faultDisplay.alpha = 0.8;
+					break;
+				default :
+					faultDisplay.alpha = 0;
+			}
+		},200);
+		setTimeout(function(){
+			switch(cbb.state){
+				case "redSolid" :
+					faultDisplay.tint = red_col;
+					faultDisplay.alpha = 0.8;
+					break;
+				case "greenSolid" :
+					faultDisplay.tint = green_col;
+					faultDisplay.alpha = 0.8;
+					break;
+				case "blueSolid" :
+					faultDisplay.tint = blue_col;
+					faultDisplay.alpha = 0.8;
+					break;
+				default :
+					faultDisplay.alpha = 0;
+			}
+		},300);
 	},1000);
 	cbb.faultDisplay = faultDisplay;
 	return cbb;
@@ -280,6 +365,9 @@ function showInfoWindow(sprite, pointer) {
 		display_labels.push('Earth Leakage');
 		display_params.push('isolation_status_text');
 		display_labels.push('Isolation Relay');
+		display_params.push('window_id');
+		display_labels.push('Detonators Connected');
+		
     }
 	
 
@@ -332,16 +420,60 @@ function updateNodeVisual(nodeVisual, node){
 	else{
 		nodeVisual.alpha = 0.5;
 	}
-	
 	if(parseInt(node.type_id) == 3){
 		if(node.communication_status == 0)
-			nodeVisual.state = "comms_loss";
-		else if(node.partial_blast_lfs == 1 || node.cable_fault == 1 || node.earth_leakage == 1)
-			nodeVisual.state = "fault";
-		else if(node.booster_fired_lfs == 1)
-			nodeVisual.state = "fired";
-		else
-			nodeVisual.state = "ok";
+			nodeVisual.state = "off";
+		else{
+			switch(parseInt(node.led_state)){
+				case 0 :
+					nodeVisual.state = "redSingleFlash";
+					break;
+					
+				case 1 :
+					nodeVisual.state = "greenSingleFlash";
+					break;
+					
+				case 2 :
+					nodeVisual.state = "blueSingleFlash";
+					break;
+					
+				case 3 :
+					nodeVisual.state = "redDoubleFlash";
+					break;
+					
+				case 4 :
+					nodeVisual.state = "greenDoubleFlash";
+					break;
+					
+				case 5 :
+					nodeVisual.state = "blueDoubleFlash";
+					break;
+					
+				case 6 :
+					nodeVisual.state = "redSolid";
+					break;
+					
+				case 7 :
+					nodeVisual.state = "greenSolid";
+					break;
+					
+				case 8 :
+					nodeVisual.state = "blueSolid";
+					break;
+					
+				case 9 :
+					nodeVisual.state = "redFastFlash";
+					break;
+					
+				case 10 :
+					nodeVisual.state = "greenFastFlash";
+					break;
+					
+				case 11 :
+					nodeVisual.state = "blueFastFlash";
+					break;
+			}
+		}
 	}
 	
 }
