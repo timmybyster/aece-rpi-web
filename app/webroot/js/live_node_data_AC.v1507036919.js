@@ -167,42 +167,43 @@ function createCbb(node){
 	green_col = Phaser.Color.toRGBA(0, 0, 255, 0);
 	blue_col = Phaser.Color.toRGBA(0, 0, 0, 255);
 	setInterval(function(){
+		console.log(cbb.state);
 		switch(cbb.state){
 			case "redSingleFlash" :
 				faultDisplay.tint = red_col;
-				faultDisplay.alpha = 0.4;
+				faultDisplay.alpha = 0.8;
 				break;
 			case "greenSingleFlash" :
 				faultDisplay.tint = green_col;
-				faultDisplay.alpha = 0.4;
+				faultDisplay.alpha = 0.8;
 				break;
 			case "blueSingleFlash" :
 				faultDisplay.tint = blue_col;
-				faultDisplay.alpha = 0.4;
+				faultDisplay.alpha = 0.8;
 				break;	
 			case "redDoubleFlash" :
 				faultDisplay.tint = red_col;
-				faultDisplay.alpha = 0.4;
+				faultDisplay.alpha = 0.8;
 				break;
 			case "greenDoubleFlash" :
 				faultDisplay.tint = green_col;
-				faultDisplay.alpha = 0.4;
+				faultDisplay.alpha = 0.8;
 				break;
 			case "blueDoubleFlash" :
 				faultDisplay.tint = blue_col;
-				faultDisplay.alpha = 0.4;
+				faultDisplay.alpha = 0.8;
 				break;	
 			case "redSolid" :
 				faultDisplay.tint = red_col;
-				faultDisplay.alpha = 0.4;
+				faultDisplay.alpha = 0.8;
 				break;
 			case "greenSolid" :
 				faultDisplay.tint = green_col;
-				faultDisplay.alpha = 0.4;
+				faultDisplay.alpha = 0.8;
 				break;
 			case "blueSolid" :
 				faultDisplay.tint = blue_col;
-				faultDisplay.alpha = 0.4;
+				faultDisplay.alpha = 0.8;
 				break;	
 			case "comms_loss":
 				faultDisplay.alpha = 0;
@@ -210,71 +211,67 @@ function createCbb(node){
 		}
 		setTimeout(function(){
 			faultDisplay.alpha = 0;
-			switch(cbb.state){
+			switch(cbb.led_state){
 				case "redSolid" :
 					faultDisplay.tint = red_col;
-					faultDisplay.alpha = 0.4;
+					faultDisplay.alpha = 0.8;
 					break;
 				case "greenSolid" :
 					faultDisplay.tint = green_col;
-					faultDisplay.alpha = 0.4;
+					faultDisplay.alpha = 0.8;
 					break;
 				case "blueSolid" :
 					faultDisplay.tint = blue_col;
-					faultDisplay.alpha = 0.4;
+					faultDisplay.alpha = 0.8;
 					break;
-				default :
-					faultDisplay.alpha = 0;
 			}
 		},100);
 		setTimeout(function(){
-			switch(cbb.state){
+			faultDisplay.alpha = 0;
+			switch(cbb.led_state){
 				case "redDoubleFlash" :
 					faultDisplay.tint = red_col;
-					faultDisplay.alpha = 0.4;
+					faultDisplay.alpha = 0.8;
 					break;
 				case "greenDoubleFlash" :
 					faultDisplay.tint = green_col;
-					faultDisplay.alpha = 0.4;
+					faultDisplay.alpha = 0.8;
 					break;
 				case "blueDoubleFlash" :
 					faultDisplay.tint = blue_col;
-					faultDisplay.alpha = 0.4;
+					faultDisplay.alpha = 0.8;
 					break;	
 				case "redSolid" :
 					faultDisplay.tint = red_col;
-					faultDisplay.alpha = 0.4;
+					faultDisplay.alpha = 0.8;
 					break;
 				case "greenSolid" :
 					faultDisplay.tint = green_col;
-					faultDisplay.alpha = 0.4;
+					faultDisplay.alpha = 0.8;
 					break;
 				case "blueSolid" :
 					faultDisplay.tint = blue_col;
-					faultDisplay.alpha = 0.4;
+					faultDisplay.alpha = 0.8;
 					break;
-				default :
-					faultDisplay.alpha = 0;
 			}
-		},200);
+		},400);
 		setTimeout(function(){
-			switch(cbb.state){
+			faultDisplay.alpha = 0;
+			switch(cbb.led_state){
 				case "redSolid" :
 					faultDisplay.tint = red_col;
-					faultDisplay.alpha = 0.4;
+					faultDisplay.alpha = 0.8;
 					break;
 				case "greenSolid" :
 					faultDisplay.tint = green_col;
-					faultDisplay.alpha = 0.4;
+					faultDisplay.alpha = 0.8;
 					break;
 				case "blueSolid" :
 					faultDisplay.tint = blue_col;
-					faultDisplay.alpha = 0.4;
+					faultDisplay.alpha = 0.8;
 					break;
-				default :
-					faultDisplay.alpha = 0;
 			}
-		},300);
+		},500);
 	},1000);
 	cbb.faultDisplay = faultDisplay;
 	return cbb;
@@ -282,7 +279,7 @@ function createCbb(node){
 
 function createInfoWindow(){
 	infoWindow = game.add.sprite(game.world.centerX, game.world.centerY, 'infowindow');
-    infoWindow.alpha = 0.4;
+    infoWindow.alpha = 0.8;
     infoWindow.visible = false;
     infoWindow.anchor.set(0);
 	infoWindow.scale.set(0.7);
@@ -365,9 +362,6 @@ function showInfoWindow(sprite, pointer) {
 		display_labels.push('Earth Leakage');
 		display_params.push('isolation_status_text');
 		display_labels.push('Isolation Relay');
-		display_params.push('window_id');
-		display_labels.push('Detonators Connected');
-		
     }
 	
 
@@ -725,4 +719,108 @@ function toggleNodeLinesVisibility() {
 	updateLines();
     else
 	lineGraphics.clear();
+}
+
+var warninglist = [];
+
+$(document).ready(function() {
+
+    var warningDelaySec = Number($('#cnfWarningDismissDelay').val());
+
+    if (warningDelaySec > 1) {
+	// show warnings
+	setInterval(function() {
+	    showWarnings(); // user paging is not reset on reload
+	}, warningDelaySec * 1000);
+    }
+
+    function dlgWarningAcknowledge() {
+
+	btnAckn = $('#dlgWarning').dialog('widget').find('.ui-dialog-buttonpane button:eq(0)');
+	btnAckn.attr('disabled', true);
+	btnAckn.addClass("ui-state-disabled");
+	$('#dlgLoadingIndic').show();
+
+	warnId = $("#dlgWarning").data('warnId');
+
+	var posting = $.post("../warnings/acknowledge_warning/", {id: warnId});
+	posting.done(function(data) {
+	    if (data['success'] !== 1) {
+		$("#dlgWarning").dialog("close");
+		alert(data['reason']);
+	    } else {
+		$("#dlgWarning").dialog("close");
+	    }
+
+	    // check if there is more warnings in the list
+	    if (warninglist.length > 0) {
+		warning = warninglist.pop();
+		$('#warningMessage').html(warning[1]);
+		$("#dlgWarning").data('warnId', warning[0]).dialog("open");
+	    }
+
+	});
+	posting.fail(function(data) {
+	    alert('Problem connecting to server. Please try again.');
+	    btnAckn = $('#dlgWarning').dialog('widget').find('.ui-dialog-buttonpane button:eq(0)');
+	    btnAckn.attr('disabled', false);
+	    btnAckn.removeClass("ui-state-disabled");
+	    $('#dlgLoadingIndic').hide();
+	});
+
+    }
+
+    function dlgWarningDismiss() {
+	$("#dlgWarning").dialog("close");
+
+	// check if there is more warnings in the list
+	if (warninglist.length > 0) {
+	    warning = warninglist.pop();
+	    $('#warningMessage').html(warning[1]);
+	    $("#dlgWarning").data('warnId', warning[0]).dialog("open");
+	}
+    }
+
+
+    dlgWarning = $("#dlgWarning").dialog({
+	autoOpen: false,
+	modal: true,
+	width: 400,
+	buttons: {
+	    "Acknowledge": dlgWarningAcknowledge,
+	    "Dismiss": dlgWarningDismiss,
+	},
+	open: function(event, ui) {
+	    btnSubmit = $('#dlgWarning').dialog('widget').find('.ui-dialog-buttonpane button:eq(0)');
+	    btnSubmit.attr('disabled', false);
+	    btnSubmit.removeClass("ui-state-disabled");
+	    $('#dlgLoadingIndic').hide();
+	}
+    });
+
+    showWarnings(); // show on startup
+});
+
+
+function showWarnings() {
+    // get all the unacknowledged warnings
+
+    warninglist = [];
+
+    var base_url = $('#cnfRoute').val();
+    //alert(base_url);
+    var posting = $.post(base_url + "warnings/get_unacknowledged/");
+    posting.done(function(data) {
+	$(data).each(function(index, elem) {
+	    warning = elem['Warning'];
+	    //alert('got warning' + warning['message']);	    
+	    warninglist.push([warning['id'], warning['message']]);
+	});
+	if (warninglist.length > 0) {
+	    warning = warninglist.pop()
+	    $('#warningMessage').html(warning[1]);
+	    $("#dlgWarning").data('warnId', warning[0]).dialog("open");
+	}
+    });
+
 }
