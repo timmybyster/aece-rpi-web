@@ -196,7 +196,7 @@ function ledFlash(){
     blue_col = Phaser.Color.toRGBA(0, 0, 0, 255);
     red_col = Phaser.Color.toRGBA(0, 255, 0, 0);
     neutral_col = Phaser.Color.toRGBA(255, 255, 255, 255);
-	faultDisplay.alpha = 0.5;
+	faultDisplay.alpha = 0.7;
 	switch(faultDisplay.firstFlash){
 		case "off" :
 			faultDisplay.alpha = 0;
@@ -216,7 +216,7 @@ function ledFlash(){
 	}
 	
 	setTimeout(function(){
-		faultDisplay.alpha = 0.5;
+		faultDisplay.alpha = 0.7;
 		switch(faultDisplay.firstWait){
 			case "off" :
 				faultDisplay.alpha = 0;
@@ -237,7 +237,7 @@ function ledFlash(){
 	},100);
 	
 	setTimeout(function(){
-		faultDisplay.alpha = 0.5;
+		faultDisplay.alpha = 0.7;
 		switch(faultDisplay.secondFlash){
 			case "off" :
 				faultDisplay.alpha = 0;
@@ -258,7 +258,7 @@ function ledFlash(){
 	},200);
 	
 	setTimeout(function(){
-		faultDisplay.alpha = 0.5;
+		faultDisplay.alpha = 0.7;
 		switch(faultDisplay.secondWait){
 			case "off" :
 				faultDisplay.alpha = 0;
@@ -288,7 +288,7 @@ function showInfoWindow(sprite, pointer) {
 	infoWindow.width = 300;
 	infoWindow.height = 300;
 
-    newx = Number(sprite.x) + 50;
+    newx = Number(sprite.x) + 100;
     infoWindow.x = newx;
     infoWindow.y = sprite.y;
 	infoWindow.width = infoWindow.width;

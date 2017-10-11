@@ -18,7 +18,7 @@ if ($this->Session->read('Auth')['User']['role_id'] == Configure::read('Role')['
 
 <?php //echo $this->Html->css('navbar'); // cached by asset compress  ?>
 
-<div class="navbar navbar-inverse navbar-fixed-top">
+<div class="navbar navbar-inverse navbar-fixed-top" style="background-color: #FFD105;">
     <div class="container">
         <div class="navbar-header">
 	    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -27,8 +27,9 @@ if ($this->Session->read('Auth')['User']['role_id'] == Configure::read('Role')['
 		<span class="icon-bar"></span>
 	    </button>
 	    </div>
-        <div class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse" style="font-size: 18px;">
 	    <ul class="nav navbar-nav">
+		<li><?php echo $this->Html->image('Logo.png')?></li>
 		<li><?php echo $this->Html->link(__('System Status'), array('controller' => 'users', 'action' => 'home')); ?></li>
 		<li><?php echo $this->Html->link(__('Nodes'), array('controller' => 'nodes', 'action' => 'index')); ?></li> 
 		<li><?php echo $this->Html->link(__('Warnings'), array('controller' => 'warnings', 'action' => 'index')); ?></li>
@@ -47,9 +48,8 @@ if ($this->Session->read('Auth')['User']['role_id'] == Configure::read('Role')['
     		</li>
 		<?php endif; ?>
 		<li><?php echo $this->Html->link(__('Change Password'), array('controller' => 'users', 'action' => 'change_password')); ?></li>
-
-		<li><?php echo $this->Html->link(__('Logout'), array('controller' => 'users', 'action' => 'logout')); ?></li>		
-	    </ul>
+		<li><?php echo $this->Html->link(__('Logout'), array('controller' => 'users', 'action' => 'logout')); ?></li>
+		</ul>
         </div><!--/.nav-collapse -->
     </div>
 </div>
