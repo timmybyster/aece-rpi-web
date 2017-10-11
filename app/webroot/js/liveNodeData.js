@@ -15,6 +15,8 @@ var infoWindowlbls = {};
 var infoWindowtxts = {};
 var infoWindowNumlbls = 15;
 
+var faultDisplay;
+
 var lines = [];
 var lineGraphics;
 
@@ -42,6 +44,7 @@ function preload(){
 function create(){
 	getAllNodeDataFromServer();
     createInfoWindow();
+	createLedDisplay();
 	
 	cursors = game.input.keyboard.createCursorKeys();
 	game.world.setBounds(-1000, -1000, 2000, 2000);
@@ -157,132 +160,12 @@ function createCcb(node){
 
 function createCbb(node){
 	var cbb = game.add.sprite(parseInt(node.x), parseInt(node.y), 'cbb');
-	var faultDisplay = game.add.sprite(-13, -24, 'fault', 0);
-	
-	cbb.addChild(faultDisplay);
-	
-	cbb.state = "greenSingleFlash";
-	
-	red_col = Phaser.Color.toRGBA(0, 255, 0, 0);
-	green_col = Phaser.Color.toRGBA(0, 0, 255, 0);
-	blue_col = Phaser.Color.toRGBA(0, 0, 0, 255);
-	setInterval(function(){
-		switch(cbb.state){
-			case "redSingleFlash" :
-				faultDisplay.tint = red_col;
-				faultDisplay.alpha = 0.4;
-				break;
-			case "greenSingleFlash" :
-				faultDisplay.tint = green_col;
-				faultDisplay.alpha = 0.4;
-				break;
-			case "blueSingleFlash" :
-				faultDisplay.tint = blue_col;
-				faultDisplay.alpha = 0.4;
-				break;	
-			case "redDoubleFlash" :
-				faultDisplay.tint = red_col;
-				faultDisplay.alpha = 0.4;
-				break;
-			case "greenDoubleFlash" :
-				faultDisplay.tint = green_col;
-				faultDisplay.alpha = 0.4;
-				break;
-			case "blueDoubleFlash" :
-				faultDisplay.tint = blue_col;
-				faultDisplay.alpha = 0.4;
-				break;	
-			case "redSolid" :
-				faultDisplay.tint = red_col;
-				faultDisplay.alpha = 0.4;
-				break;
-			case "greenSolid" :
-				faultDisplay.tint = green_col;
-				faultDisplay.alpha = 0.4;
-				break;
-			case "blueSolid" :
-				faultDisplay.tint = blue_col;
-				faultDisplay.alpha = 0.4;
-				break;	
-			case "comms_loss":
-				faultDisplay.alpha = 0;
-				break;
-		}
-		setTimeout(function(){
-			faultDisplay.alpha = 0;
-			switch(cbb.state){
-				case "redSolid" :
-					faultDisplay.tint = red_col;
-					faultDisplay.alpha = 0.4;
-					break;
-				case "greenSolid" :
-					faultDisplay.tint = green_col;
-					faultDisplay.alpha = 0.4;
-					break;
-				case "blueSolid" :
-					faultDisplay.tint = blue_col;
-					faultDisplay.alpha = 0.4;
-					break;
-				default :
-					faultDisplay.alpha = 0;
-			}
-		},100);
-		setTimeout(function(){
-			switch(cbb.state){
-				case "redDoubleFlash" :
-					faultDisplay.tint = red_col;
-					faultDisplay.alpha = 0.4;
-					break;
-				case "greenDoubleFlash" :
-					faultDisplay.tint = green_col;
-					faultDisplay.alpha = 0.4;
-					break;
-				case "blueDoubleFlash" :
-					faultDisplay.tint = blue_col;
-					faultDisplay.alpha = 0.4;
-					break;	
-				case "redSolid" :
-					faultDisplay.tint = red_col;
-					faultDisplay.alpha = 0.4;
-					break;
-				case "greenSolid" :
-					faultDisplay.tint = green_col;
-					faultDisplay.alpha = 0.4;
-					break;
-				case "blueSolid" :
-					faultDisplay.tint = blue_col;
-					faultDisplay.alpha = 0.4;
-					break;
-				default :
-					faultDisplay.alpha = 0;
-			}
-		},200);
-		setTimeout(function(){
-			switch(cbb.state){
-				case "redSolid" :
-					faultDisplay.tint = red_col;
-					faultDisplay.alpha = 0.4;
-					break;
-				case "greenSolid" :
-					faultDisplay.tint = green_col;
-					faultDisplay.alpha = 0.4;
-					break;
-				case "blueSolid" :
-					faultDisplay.tint = blue_col;
-					faultDisplay.alpha = 0.4;
-					break;
-				default :
-					faultDisplay.alpha = 0;
-			}
-		},300);
-	},1000);
-	cbb.faultDisplay = faultDisplay;
 	return cbb;
 }
 
 function createInfoWindow(){
 	infoWindow = game.add.sprite(game.world.centerX, game.world.centerY, 'infowindow');
-    infoWindow.alpha = 0.4;
+    infoWindow.alpha = 0.8;
     infoWindow.visible = false;
     infoWindow.anchor.set(0);
 	infoWindow.scale.set(0.7);
@@ -295,6 +178,106 @@ function createInfoWindow(){
 		infoWindow.addChild(infoWindowlbls[i]);
 		infoWindow.addChild(infoWindowtxts[i]);
 	}
+}
+
+function createLedDisplay(){
+	faultDisplay = game.add.sprite(-13, -24, 'fault', 0);
+	faultDisplay.alpha = 0.8;
+	faultDisplay.width = 80;
+	faultDisplay.height = 80;
+	faultDisplay.visible = false;
+    faultDisplay.anchor.set(0);
+	
+	setInterval(ledFlash, 1000);
+}
+
+function ledFlash(){
+	green_col = Phaser.Color.toRGBA(0, 0, 255, 0);
+    blue_col = Phaser.Color.toRGBA(0, 0, 0, 255);
+    red_col = Phaser.Color.toRGBA(0, 255, 0, 0);
+    neutral_col = Phaser.Color.toRGBA(255, 255, 255, 255);
+	faultDisplay.alpha = 0.5;
+	switch(faultDisplay.firstFlash){
+		case "off" :
+			faultDisplay.alpha = 0;
+			break;
+			
+		case "red" :
+			faultDisplay.tint = red_col;
+			break;
+			
+		case "green":
+			faultDisplay.tint = green_col;
+			break;
+			
+		case "blue":
+			faultDisplay.tint = blue_col;
+			break;
+	}
+	
+	setTimeout(function(){
+		faultDisplay.alpha = 0.5;
+		switch(faultDisplay.firstWait){
+			case "off" :
+				faultDisplay.alpha = 0;
+				break;
+				
+			case "red" :
+				faultDisplay.tint = red_col;
+				break;
+				
+			case "green":
+				faultDisplay.tint = green_col;
+				break;
+				
+			case "blue":
+				faultDisplay.tint = blue_col;
+				break;
+		}
+	},100);
+	
+	setTimeout(function(){
+		faultDisplay.alpha = 0.5;
+		switch(faultDisplay.secondFlash){
+			case "off" :
+				faultDisplay.alpha = 0;
+				break;
+				
+			case "red" :
+				faultDisplay.tint = red_col;
+				break;
+				
+			case "green":
+				faultDisplay.tint = green_col;
+				break;
+				
+			case "blue":
+				faultDisplay.tint = blue_col;
+				break;
+		}
+	},200);
+	
+	setTimeout(function(){
+		faultDisplay.alpha = 0.5;
+		switch(faultDisplay.secondWait){
+			case "off" :
+				faultDisplay.alpha = 0;
+				break;
+				
+			case "red" :
+				faultDisplay.tint = red_col;
+				break;
+				
+			case "green":
+				faultDisplay.tint = green_col;
+				break;
+				
+			case "blue":
+				faultDisplay.tint = blue_col;
+				break;
+		}
+	},300);
+	
 }
 
 function showInfoWindow(sprite, pointer) {
@@ -311,6 +294,7 @@ function showInfoWindow(sprite, pointer) {
 	infoWindow.width = infoWindow.width;
 	infoWindow.height = infoWindow.height;
     infoWindow.visible = true;
+	
     infoWindow.bringToTop();
 
     // check if inside camera
@@ -376,12 +360,122 @@ function showInfoWindow(sprite, pointer) {
 	if (display_params[i] in node && node[display_params[i]])
 	    infoWindowtxts[i].text = node[display_params[i]];
     }
+	showLed(sprite, pointer);
+}
 
+function showLed(sprite, pointer){
+	if(sprite.type_id != 3)
+		return;
+	
+	faultDisplay.x = sprite.x;
+	faultDisplay.y = sprite.y;
+	
+	if(node.communication_status == 0){
+		sprite.firstFlash = "off";
+		sprite.secondFlash = "off";
+		faultDisplay.firstWait = "off";
+		faultDisplay.secondWait = "off";
+	}
+	else{
+		switch(parseInt(sprite.led_state)){
+			case 0 :
+				faultDisplay.firstFlash = "red";
+				faultDisplay.firstWait = "off";
+				faultDisplay.secondFlash = "off";
+				faultDisplay.secondWait = "off";
+				break;
+				
+			case 1 :
+				faultDisplay.firstFlash = "green";
+				faultDisplay.firstWait = "off";
+				faultDisplay.secondFlash = "off";
+				faultDisplay.secondWait = "off";
+				break;
+				
+			case 2 :
+				faultDisplay.firstFlash = "blue";
+				faultDisplay.firstWait = "off";
+				faultDisplay.secondFlash = "off";
+				faultDisplay.secondWait = "off";
+				break;
+				
+			case 3 :
+				faultDisplay.firstFlash = "red";
+				faultDisplay.firstWait = "off";
+				faultDisplay.secondFlash = "red";
+				faultDisplay.secondWait = "off";
+				break;
+				
+			case 4 :
+				faultDisplay.firstFlash = "green";
+				faultDisplay.firstWait = "off";
+				faultDisplay.secondFlash = "green";
+				faultDisplay.secondWait = "off";
+				break;
+				
+			case 5 :
+				faultDisplay.firstFlash = "blue";
+				faultDisplay.firstWait = "off";
+				faultDisplay.secondFlash = "blue";
+				faultDisplay.secondWait = "off";
+				break;
+				
+			case 6 :
+				faultDisplay.firstFlash = "red";
+				faultDisplay.firstWait = "red";
+				faultDisplay.secondFlash = "red";
+				faultDisplay.secondWait = "red";
+				break;
+				
+			case 7 :
+				faultDisplay.firstFlash = "green";
+				faultDisplay.firstWait = "green";
+				faultDisplay.secondFlash = "green";
+				faultDisplay.secondWait = "green";
+				break;
+				
+			case 8 :
+				faultDisplay.firstFlash = "blue";
+				faultDisplay.firstWait = "blue";
+				faultDisplay.secondFlash = "blue";
+				faultDisplay.secondWait = "blue";
+				break;
+				
+			case 9 :
+				faultDisplay.firstFlash = "green";
+				faultDisplay.firstWait = "off";
+				faultDisplay.secondFlash = "off";
+				faultDisplay.secondWait = "off";
+				break;
+				
+			case 10 :
+				faultDisplay.firstFlash = "green";
+				faultDisplay.firstWait = "off";
+				faultDisplay.secondFlash = "off";
+				faultDisplay.secondWait = "off";
+				break;
+				
+			case 11 :
+				faultDisplay.firstFlash = "green";
+				faultDisplay.firstWait = "off";
+				faultDisplay.secondFlash = "off";
+				faultDisplay.scondWait = "off";
+				break;
+		}
+	}
+	
+	faultDisplay.visible = true;
 }
 
 function hideInfoWindow(sprite, pointer){
 	infoWindow.visible = false;
 	sprite.click = 0;
+	
+	hideFaultDisplay(sprite, pointer);
+}
+
+function hideFaultDisplay(sprite, pointer){
+	faultDisplay.visible = false;
 }
 
 function getNodeDataById(id) {
@@ -420,61 +514,7 @@ function updateNodeVisual(nodeVisual, node){
 	else{
 		nodeVisual.alpha = 0.5;
 	}
-	if(parseInt(node.type_id) == 3){
-		if(node.communication_status == 0)
-			nodeVisual.state = "off";
-		else{
-			switch(parseInt(node.led_state)){
-				case 0 :
-					nodeVisual.state = "redSingleFlash";
-					break;
-					
-				case 1 :
-					nodeVisual.state = "greenSingleFlash";
-					break;
-					
-				case 2 :
-					nodeVisual.state = "blueSingleFlash";
-					break;
-					
-				case 3 :
-					nodeVisual.state = "redDoubleFlash";
-					break;
-					
-				case 4 :
-					nodeVisual.state = "greenDoubleFlash";
-					break;
-					
-				case 5 :
-					nodeVisual.state = "blueDoubleFlash";
-					break;
-					
-				case 6 :
-					nodeVisual.state = "redSolid";
-					break;
-					
-				case 7 :
-					nodeVisual.state = "greenSolid";
-					break;
-					
-				case 8 :
-					nodeVisual.state = "blueSolid";
-					break;
-					
-				case 9 :
-					nodeVisual.state = "redFastFlash";
-					break;
-					
-				case 10 :
-					nodeVisual.state = "greenFastFlash";
-					break;
-					
-				case 11 :
-					nodeVisual.state = "blueFastFlash";
-					break;
-			}
-		}
-	}
+	nodeVisual.led_state = node.led_state;
 	
 }
 
@@ -587,7 +627,6 @@ function focusCameraOnNode(sprite, pointer){
 }
 
 function goToDetonators(sprite, pointer){
-	console.log("detonators");
 	path = "detslive/" + sprite.db_id;
 	open(path, "_blank", "channelmode=yes,fullscreen=yes,titlebar=no,status=no,menubar=no,toolbar=no,scrollbars=no");
 }
@@ -677,9 +716,6 @@ function upateLinesForParent(parent_db_id) {
 //  ISC-1 and IB651 nodes should be connected (with graphical lines) in a serial fashion so that each child is 
 // connected to the next closest child. ISC-1 and IB651 child nodes will make up 2 unique daisy chains.
 function updateLines() {
-
-    console.log("updateLines()");
-
     lineGraphics.clear();
     lineGraphics.lineStyle(1, 0x222222);
 
@@ -688,8 +724,7 @@ function updateLines() {
 		parents.push(nodeVisuals[db_id].parent_id);
     }
 	var parents_unique = unique(parents);
-	console.log(parents_unique);
-
+	
     for (id in parents_unique)
 	upateLinesForParent(parents_unique[id]);
 }
